@@ -156,7 +156,7 @@ st.write("**Ukupni koeficijent sigurnosti:**")
 st.latex(r'''S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}''')
 S_total = (Ssigma * Stau) / np.sqrt(Ssigma ** 2 + Stau ** 2)
 st.write(f"**Ukupni koeficijent sigurnosti S = {S_total:.6f}**")
-st.info("Treba da bude veće od **Smin = 1.5 – 2**")
+st.info("Treba da bude veće od **Smin = 1.5 – 2** + komentar")
 
 # ===================================
 # Tačka 1.2
@@ -183,13 +183,13 @@ if lamda <= 89:
     st.latex(r'''\sigma_K = 335 - 0.62 \cdot \lambda''')
     sigmaK = 335 - 0.62 * lamda
     st.write(f"**σK = {sigmaK:.6f} N/mm²**")
-    st.info("**Si** treba biti veće **2 – 4**")
+    st.info("**Si** treba biti veće **2 – 4** + komentar")
 else:
     st.info("Za **σK** koristi se Ojlerov obrazac zato što je λ ≥ 89")
     st.latex(r'''\sigma_K = \frac{E \cdot \pi^2}{\lambda^2}''')
     sigmaK = (E * np.pi ** 2) / (lamda ** 2)
     st.write(f"**σK = {sigmaK:.6f} N/mm²**")
-    st.info("**Si** treba biti veće **3 – 6**")
+    st.info("**Si** treba biti veće **3 – 6** + komentar")
 
 st.write("**Izračunavanje σi:**")
 st.latex(r'''\sigma_i = \sqrt{\sigma^2 + 3 \tau^2}''')
@@ -214,7 +214,7 @@ if 10 <= p <= 20:
     st.success("Rezultat zadovoljava uslov (**10 ≤ p ≤ 20**)")
 else:
     st.warning("Rezultat ne zadovoljava uslov")
-    st.info("Ovo je provera nulte tačke")
+st.info("Ovo je provera nulte tačke i treba napisati komentar")
 
 # ===================================
 # Tačka 1.4
@@ -317,7 +317,7 @@ st.write("**Ukupni koeficijent sigurnosti:**")
 st.latex(r'''S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}''')
 S_total = (Ssigma * Stau) / np.sqrt(Ssigma ** 2 + Stau ** 2)
 st.write(f"**S = {S_total:.6f}**")
-st.info("Veće od **Smin = 1.25 – 2.5** (proveriti)")
+st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
 
 # ===================================
 # Tabela 2.2
@@ -338,7 +338,7 @@ st.write("**Koeficijent sigurnosti za zatezanje:**")
 st.latex(r'''S_{\sigma} = \frac{R_{eH}}{\sigma}''')
 Ssigma = Reh / sigma
 st.write(f"**Sσ = {Ssigma:.6f}**")
-st.info("Veće od **Smin = 1.25 – 2.5** (proveriti)")
+st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
 
 # ===================================
 # Tabela 2.3
@@ -359,4 +359,4 @@ st.write("**Koeficijent sigurnosti za amplitudni napon:**")
 st.latex(r'''S_a = \frac{\sigma_{AM}}{\sigma_a}''')
 Sa = SigmaAM / sigmaa
 st.write(f"**Sa = {Sa:.6f}**")
-st.info("Veće od **Smin = 1.25 – 2.5** (proveriti)")
+st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
