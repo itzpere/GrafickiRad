@@ -127,19 +127,19 @@ st.latex(r'''\varphi = \arctan\left( \frac{P}{\pi \cdot d_2} \right)''')
 fi = np.arctan(P / (d2 * np.pi))
 st.write(f"**ϕ = {np.degrees(fi):.6f}°**")
 
-st.write("**Postavljena vrednost faktora trenja f:**")
+st.write("**Postavljena vrednost faktora trenja μ:**")
 f = 0.09
-st.write(f"**f = {f}**")
+st.write(f"**μ = {f}**")
 
 st.write("**Formula za ρ:**")
-st.latex(r'''\rho = \arctan\left( \frac{f}{\cos 15^\circ} \right)''')
+st.latex(r'''\rho = \arctan\left( \frac{\mu}{\cos 15^\circ} \right)''')
 rho = np.arctan(f / np.cos(np.radians(15)))
 st.write(f"**ρ = {np.degrees(rho):.6f}°**")
 
 st.write("**Formula za Tₙₚ:**")
 st.latex(r'''T_{np} = \frac{F \cdot d_2}{2} \cdot \tan(\varphi + \rho)''')
 Tnp = (F * d2) / 2 * np.tan(fi + rho)
-st.write(f"**Tₙₚ = {Tnp:.6f} N·mm**")
+st.write(f"**Tₙₚ = {Tnp:.6f} N/mm²**")
 
 # ===================================
 # Tačka 1.1
@@ -179,7 +179,6 @@ st.header("Tačka 1.2")
 
 st.write("**Postavljena vrednost Bₗ:**")
 Bl = st.number_input("Unesite vrednost Bₗ (mm):", value=19.0, format="%.6f")
-st.write(f"**Bₗ = {Bl} mm**")
 
 i = d3 / 4
 st.write(f"**i = {i:.6f} mm**")
@@ -227,7 +226,7 @@ st.write(f"**p = {p:.6f} N/mm²**")
 if 10 <= p <= 20:
     st.success("Rezultat zadovoljava uslov (**10 ≤ p ≤ 20**)")
 else:
-    st.warning("Rezultat ne zadovoljava uslov")
+    st.warning("Rezultat ne zadovoljava uslov (**10 ≤ p ≤ 20**)")
 st.info("Ovo je provera nulte tačke i treba napisati komentar")
 
 # ===================================
@@ -261,10 +260,8 @@ else:
 st.header("Tačka 2")
 
 z = st.number_input("Unesite broj z:", value=4.0, format="%.6f")
-st.write(f"**z = {z}**")
 
 Reh = st.number_input("Unesite vrednost RₑH (N/mm²) iz tabele 3.5:", value=300.0, format="%.6f")
-st.write(f"**RₑH = {Reh} N/mm²**")
 
 st.write("**Formula za Fᵣ:**")
 st.latex(r'''F_r = \frac{F}{z}''')
@@ -292,7 +289,6 @@ st.header("Tačka 2.1")
 
 st.write("**Postavljena vrednost dozvoljenog napona smicanja τₜ:**")
 tauT = st.number_input("Unesite dozvoljeni napon smicanja τₜ (N/mm²):", value=200.0, format="%.6f")
-st.write(f"**τₜ = {tauT} N/mm²**")
 
 st.write("**Formula za σ:**")
 st.latex(r'''\sigma = \frac{F_p}{A_s}''')
@@ -304,12 +300,12 @@ st.latex(r'''S_{\sigma} = \frac{R_{eH}}{\sigma}''')
 S_sigma = Reh / sigma
 st.write(f"**Sσ = {S_sigma:.6f}**")
 
-st.write("**Postavljena vrednost faktora trenja f:**")
+st.write("**Postavljena vrednost faktora trenja μ:**")
 f_val = 0.15
-st.write(f"**f = {f_val}**")
+st.write(f"**μ = {f_val}**")
 
 st.write("**Formula za ρ (rho):**")
-st.latex(r'''\rho = \arctan\left( \frac{f}{\cos 30^\circ} \right)''')
+st.latex(r'''\rho = \arctan\left( \frac{\mu}{\cos 30^\circ} \right)''')
 rho_val = np.arctan(f_val / np.cos(np.radians(30)))
 st.write(f"**ρ = {np.degrees(rho_val):.6f}°**")
 
@@ -367,7 +363,6 @@ st.header("Tačka 2.3")
 
 st.write("**Postavljena vrednost dozvoljenog amplitudnog napona σAₘ:**")
 SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon σAₘ (N/mm²):", value=50.0, format="%.6f")
-st.write(f"**σAₘ = {SigmaAM} N/mm²**")
 
 st.write("**Formula za Fₐ:**")
 st.latex(r'''F_a = \frac{Fz - F_p}{2}''')
