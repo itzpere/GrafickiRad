@@ -22,14 +22,14 @@ else:
     tauD0 = 205
 
 st.write("**Dozvoljeni napon zatezanja:**")
-st.latex(r'''\sigma_{D0} = {} \, \text{{N/mm}}^2'''.format(sigmaD0))
+st.latex(f'''\\sigma_{{D0}} = {sigmaD0} \\, \\text{{N/mm}}^2''')
 st.write("**Dozvoljeni napon smicanja:**")
-st.latex(r'''\tau_{D0} = {} \, \text{{N/mm}}^2'''.format(tauD0))
+st.latex(f'''\\tau_{{D0}} = {tauD0} \\, \\text{{N/mm}}^2''')
 
-st.write("**Formula za A3:**")
+st.write("**Formula za A₃:**")
 st.latex(r'''A_3 = \frac{1.3 \cdot F \cdot 2.5}{\sigma_{D0}}''')
 
-# Izračunavanje A3
+# Izračunavanje A₃
 A3 = (1.3 * F * 2.5) / sigmaD0
 st.write(f"**A₃ = {A3:.6f} mm²**")
 
@@ -46,17 +46,17 @@ st.header("Nulta tačka 1")
 # Konstante
 E = 206000  # Modul elastičnosti (N/mm²)
 st.write("**Modul elastičnosti E:**")
-st.latex(r'''E = {} \, \text{{N/mm}}^2'''.format(E))
+st.latex(f'''E = {E} \\, \\text{{N/mm}}^2''')
 S = 7       # Koeficijent sigurnosti
 st.write("**Koeficijent sigurnosti S:**")
-st.latex(r'''S = {}'''.format(S))
+st.latex(f'''S = {S}''')
 
 h = st.number_input("Unesite visinu h (mm):", value=400.0, format="%.6f")
 
 st.write("**Formula za d₃:**")
 st.latex(r'''d_3 = \sqrt[4]{ \frac{64 \cdot F \cdot S \cdot h^2}{\pi^3 \cdot E}}''')
 
-# Izračunavanje d3
+# Izračunavanje d₃
 d3 = ((64 * F * S * h ** 2) / (np.pi ** 3 * E)) ** (1 / 4)
 st.write(f"**d₃ ≥ {d3:.6f} mm**")
 st.info("Uzmi prvi veći prečnik iz tabele 3.2")
