@@ -21,11 +21,19 @@ else:
     sigmaD0 = 310
     tauD0 = 205
 
+st.write(f"**sigmaD0 = {sigmaD0} N/mm²**")
+st.write(f"**tauD0 = {tauD0} N/mm²**")
+
+# Konstante za A3
+k1 = 1.3
+k2 = 2.5
+st.write(f"**Konstante:** k1 = {k1}, k2 = {k2}")
+
 st.write("**Formula za A3:**")
-st.latex(r'''A3 = \frac{1.3 \cdot F \cdot 2.5}{\sigma_{D0}}''')
+st.latex(r'''A3 = \frac{k1 \cdot F \cdot k2}{\sigma_{D0}}''')
 
 # Izračunavanje A3
-A3 = (1.3 * F * 2.5) / sigmaD0
+A3 = (k1 * F * k2) / sigmaD0
 st.write(f"**A3 = {A3:.6f} mm²**")
 
 if A3 <= 104:
@@ -41,6 +49,8 @@ st.header("Nulta tačka 1")
 # Konstante
 E = 206000  # Modul elastičnosti (N/mm²)
 S = 7       # Koeficijent sigurnosti
+st.write(f"**E = {E} N/mm²**")
+st.write(f"**S = {S}**")
 
 h = st.number_input("Unesite visinu h (mm):", value=400.0, format="%.6f")
 
@@ -62,6 +72,7 @@ P = st.number_input("Unesite korak navoja P (mm):", value=5.0, format="%.6f")
 d2 = st.number_input("Unesite srednji prečnik navoja d2 (mm):", value=21.5, format="%.6f")
 
 H1 = P / 2
+st.write(f"**H1 = {H1} mm**")
 
 results = []
 
@@ -117,9 +128,14 @@ st.latex(r'''\varphi = \arctan\left( \frac{P}{\pi \cdot d2} \right)''')
 fi = np.arctan(P / (d2 * np.pi))
 st.write(f"**ϕ = {np.degrees(fi):.6f}°**")
 
+# Konstanta za ρ
+f = 0.09
+angle = 15
+st.write(f"**Konstante:** f = {f}, ugao = {angle}°")
+
 st.write("**Formula za ρ:**")
 st.latex(r'''\rho = \arctan\left( \frac{f}{\cos 15^\circ} \right)''')
-Ron = np.arctan(0.09 / np.cos(np.radians(15)))
+Ron = np.arctan(f / np.cos(np.radians(angle)))
 st.write(f"**ρ = {np.degrees(Ron):.6f}°**")
 
 st.write("**Formula za Tnp:**")
@@ -143,8 +159,10 @@ Ssigma = sigmaD0 / sigma
 st.write(f"**Sσ = {Ssigma:.6f}**")
 
 st.write("**Formula za τ:**")
-st.latex(r'''\tau = \frac{T_{np}}{0.2 \cdot d3^3}''')
-tau = Tnp / (0.2 * d3 ** 3)
+st.latex(r'''\tau = \frac{T_{np}}{k3 \cdot d3^3}''')
+k3 = 0.2
+st.write(f"**Konstanta:** k3 = {k3}")
+tau = Tnp / (k3 * d3 ** 3)
 st.write(f"**τ = {tau:.6f} N/mm²**")
 
 st.write("**Koeficijent sigurnosti za smicanje:**")
@@ -162,6 +180,7 @@ st.info("Treba da bude veće od **Smin = 1.5 – 2** + komentar")
 # Tačka 1.2
 # ===================================
 st.header("Tačka 1.2")
+
 st.info("Bl je vrednost koja se uzima iz kataloga na stranici predmeta nazvanim 'dvoredni ležajevi'. U slučaju da je d = 24 uzima se sledeći veći tj. 25 i Bl je 19.")
 
 Bl = st.number_input("Unesite vrednost Bl (mm):", value=19.0, format="%.6f")
@@ -169,8 +188,10 @@ i = d3 / 4
 st.write(f"**i = d3 / 4 = {i:.6f} mm**")
 
 st.write("**Formula za Lk:**")
-st.latex(r'''L_k = \frac{L_n}{2} + h + 10 + \frac{B_l}{2}''')
-lk = (Ln / 2) + h + 10 + (Bl / 2)
+st.latex(r'''L_k = \frac{L_n}{2} + h + k4 + \frac{B_l}{2}''')
+k4 = 10
+st.write(f"**Konstanta:** k4 = {k4} mm")
+lk = (Ln / 2) + h + k4 + (Bl / 2)
 st.write(f"**Lk = {lk:.6f} mm**")
 
 st.write("**Formula za λ (lambda):**")
@@ -178,10 +199,15 @@ st.latex(r'''\lambda = \frac{L_k}{i}''')
 lamda = lk / i
 st.write(f"**λ = {lamda:.6f}**")
 
+E = 206000  # Modul elastičnosti (N/mm²)
+
 if lamda <= 89:
     st.info("Za **σK** koristi se Tetmajerov obrazac zato što je λ < 89")
-    st.latex(r'''\sigma_K = 335 - 0.62 \cdot \lambda''')
-    sigmaK = 335 - 0.62 * lamda
+    k5 = 335
+    k6 = 0.62
+    st.write(f"**Konstante:** k5 = {k5}, k6 = {k6}")
+    st.latex(r'''\sigma_K = k5 - k6 \cdot \lambda''')
+    sigmaK = k5 - k6 * lamda
     st.write(f"**σK = {sigmaK:.6f} N/mm²**")
     st.info("**Si** treba biti veće **2 – 4** + komentar")
 else:
@@ -226,9 +252,11 @@ st.latex(r'''\eta_{np} = \frac{\tan \varphi}{\tan (\varphi + \rho)}''')
 eta_np = np.tan(fi) / np.tan(fi + Ron)
 st.write(f"**ηnp = {eta_np:.6f}**")
 
+k7 = 0.9
+st.write(f"**Konstanta:** k7 = {k7}")
 st.write("**Formula za ηnv:**")
-st.latex(r'''\eta_{nv} = 0.9 \cdot \eta_{np}''')
-eta_nv = 0.9 * eta_np
+st.latex(r'''\eta_{nv} = k7 \cdot \eta_{np}''')
+eta_nv = k7 * eta_np
 st.write(f"**ηnv = {eta_nv:.6f}**")
 
 # ===================================
@@ -246,6 +274,12 @@ else:
 # ===================================
 st.header("Tačka 2")
 
+st.subheader("Ponovni unos podataka")
+F = st.number_input("Ponovo unesite silu F (N):", value=F, format="%.6f")
+d2 = st.number_input("Ponovo unesite srednji prečnik navoja d2 (mm):", value=d2, format="%.6f")
+fi = np.arctan(P / (d2 * np.pi))
+st.write(f"**ϕ = {np.degrees(fi):.6f}°**")
+
 z = st.number_input("Unesite broj z:", value=4.0, format="%.6f")
 Reh = st.number_input("Unesite vrednost ReH (N/mm²) iz tabele 3.5:", value=300.0, format="%.6f")
 
@@ -254,19 +288,23 @@ st.latex(r'''F_r = \frac{F}{z}''')
 Fr = F / z
 st.write(f"**Fr = {Fr:.6f} N**")
 
+k8 = 3
+st.write(f"**Konstanta:** k8 = {k8}")
 st.write("**Formula za Fp:**")
-st.latex(r'''F_p = 3 \cdot F_r''')
-Fp = 3 * Fr
+st.latex(r'''F_p = k8 \cdot F_r''')
+Fp = k8 * Fr
 st.write(f"**Fp = {Fp:.6f} N**")
 
+k9 = 0.6
+st.write(f"**Konstanta:** k9 = {k9}")
 st.write("**Formula za As:**")
-st.latex(r'''A_s = \frac{F_p}{0.6 \cdot R_{eH}}''')
-As = Fp / (0.6 * Reh)
+st.latex(r'''A_s = \frac{F_p}{k9 \cdot R_{eH}}''')
+As = Fp / (k9 * Reh)
 st.write(f"**As = {As:.6f} mm²**")
 
 st.write("**Provera:**")
-Fp_check = 0.6 * As * Reh
-st.write(f"Fp = 0.6 × As × ReH = **{Fp_check:.6f} N**")
+Fp_check = k9 * As * Reh
+st.write(f"Fp = {k9} × As × ReH = **{Fp_check:.6f} N**")
 
 # ===================================
 # Tačka 2.1
@@ -288,14 +326,19 @@ st.latex(r'''S_{\sigma} = \frac{R_{eH}}{\sigma}''')
 Ssigma = Reh / sigma
 st.write(f"**Sσ = {Ssigma:.6f}**")
 
+f1 = 0.15
+angle1 = 30
+st.write(f"**Konstante:** f = {f1}, ugao = {angle1}°")
 st.write("**Formula za ρ (rho):**")
-st.latex(r'''\rho = \arctan\left( \frac{f}{\cos 30^\circ} \right)''')
-Ron_val = np.arctan(0.15 / np.cos(np.radians(30)))
+st.latex(r'''\rho = \arctan\left( \frac{f}{\cos {angle1}^\circ} \right)''')
+Ron_val = np.arctan(f1 / np.cos(np.radians(angle1)))
 st.write(f"**ρ = {np.degrees(Ron_val):.6f}°**")
 
 st.write("**Formula za Wp:**")
-st.latex(r'''W_p = 0.2 \cdot \left( \frac{d2 + d3}{2} \right)^3''')
-Wp = 0.2 * ((d2 + d3) / 2) ** 3
+st.latex(r'''W_p = k10 \cdot \left( \frac{d2 + d3}{2} \right)^3''')
+k10 = 0.2
+st.write(f"**Konstanta:** k10 = {k10}")
+Wp = k10 * ((d2 + d3) / 2) ** 3
 st.write(f"**Wp = {Wp:.6f} mm³**")
 
 st.write("**Formula za Tt:**")
@@ -324,9 +367,11 @@ st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
 # ===================================
 st.header("Tabela 2.2")
 
+k11 = 1/6
+st.write(f"**Konstanta:** k11 = {k11}")
 st.write("**Formula za Fz:**")
-st.latex(r'''F_z = F_p + \frac{1}{6} F_r''')
-Fz = Fp + (1 / 6) * Fr
+st.latex(r'''F_z = F_p + k11 \cdot F_r''')
+Fz = Fp + k11 * Fr
 st.write(f"**Fz = {Fz:.6f} N**")
 
 st.write("**Formula za σ:**")
@@ -345,9 +390,11 @@ st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
 # ===================================
 st.header("Tabela 2.3")
 
+k12 = 2
+st.write(f"**Konstanta:** k12 = {k12}")
 st.write("**Formula za Fa:**")
-st.latex(r'''F_a = \frac{F_z - F_p}{2}''')
-Fa = (Fz - Fp) / 2
+st.latex(r'''F_a = \frac{F_z - F_p}{k12}''')
+Fa = (Fz - Fp) / k12
 st.write(f"**Fa = {Fa:.6f} N**")
 
 st.write("**Formula za σa:**")
