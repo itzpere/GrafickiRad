@@ -154,7 +154,7 @@ st.write(f"**σ = {sigma:.6f} N/mm²**")
 st.write("**Koeficijent sigurnosti za zatezanje:**")
 st.latex(r'''S_{\sigma} = \frac{\sigma_{D0}}{\sigma}''')
 S_sigma = sigmaD0 / sigma
-st.write(f"**S_σ = {S_sigma:.6f}**")
+st.write(f"**Sσ = {S_sigma:.6f}**")
 
 st.write("**Formula za τ:**")
 st.latex(r'''\tau = \frac{T_{np}}{0.2 \cdot d_3^3}''')
@@ -164,7 +164,7 @@ st.write(f"**τ = {tau:.6f} N/mm²**")
 st.write("**Koeficijent sigurnosti za smicanje:**")
 st.latex(r'''S_{\tau} = \frac{\tau_{D0}}{\tau}''')
 S_tau = tauD0 / tau
-st.write(f"**S_τ = {S_tau:.6f}**")
+st.write(f"**Sτ = {S_tau:.6f}**")
 
 st.write("**Ukupni koeficijent sigurnosti:**")
 st.latex(r'''S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}''')
@@ -294,10 +294,6 @@ st.write("**Postavljena vrednost dozvoljenog napona smicanja τₜ:**")
 tauT = st.number_input("Unesite dozvoljeni napon smicanja τₜ (N/mm²):", value=200.0, format="%.6f")
 st.write(f"**τₜ = {tauT} N/mm²**")
 
-st.write("**Postavljena vrednost dozvoljenog amplitudnog napona σ_Aₘ:**")
-SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon σ_Aₘ (N/mm²):", value=50.0, format="%.6f")
-st.write(f"**σ_Aₘ = {SigmaAM} N/mm²**")
-
 st.write("**Formula za σ:**")
 st.latex(r'''\sigma = \frac{F_p}{A_s}''')
 sigma = Fp / As
@@ -306,7 +302,7 @@ st.write(f"**σ = {sigma:.6f} N/mm²**")
 st.write("**Koeficijent sigurnosti za zatezanje:**")
 st.latex(r'''S_{\sigma} = \frac{R_{eH}}{\sigma}''')
 S_sigma = Reh / sigma
-st.write(f"**S_σ = {S_sigma:.6f}**")
+st.write(f"**Sσ = {S_sigma:.6f}**")
 
 st.write("**Postavljena vrednost faktora trenja f:**")
 f_val = 0.15
@@ -335,7 +331,7 @@ st.write(f"**τ = {tau:.6f} N/mm²**")
 st.write("**Koeficijent sigurnosti za smicanje:**")
 st.latex(r'''S_{\tau} = \frac{\tau_T}{\tau}''')
 S_tau = tauT / tau
-st.write(f"**S_τ = {S_tau:.6f}**")
+st.write(f"**Sτ = {S_tau:.6f}**")
 
 st.write("**Ukupni koeficijent sigurnosti:**")
 st.latex(r'''S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}''')
@@ -344,33 +340,37 @@ st.write(f"**S = {S_total:.6f}**")
 st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
 
 # ===================================
-# Tabela 2.2
+# Tačka 2.2
 # ===================================
-st.header("Tabela 2.2")
+st.header("Tačka 2.2")
 
-st.write("**Formula za F_z:**")
-st.latex(r'''F_z = F_p + \frac{1}{6} F_r''')
+st.write("**Formula za Fz:**")
+st.latex(r'''Fz = F_p + \frac{1}{6} F_r''')
 Fz = Fp + (1 / 6) * Fr
-st.write(f"**F_z = {Fz:.6f} N**")
+st.write(f"**Fz = {Fz:.6f} N**")
 
 st.write("**Formula za σ:**")
-st.latex(r'''\sigma = \frac{F_z}{A_s}''')
+st.latex(r'''\sigma = \frac{Fz}{A_s}''')
 sigma = Fz / As
 st.write(f"**σ = {sigma:.6f} N/mm²**")
 
 st.write("**Koeficijent sigurnosti za zatezanje:**")
 st.latex(r'''S_{\sigma} = \frac{R_{eH}}{\sigma}''')
 S_sigma = Reh / sigma
-st.write(f"**S_σ = {S_sigma:.6f}**")
+st.write(f"**Sσ = {S_sigma:.6f}**")
 st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
 
 # ===================================
-# Tabela 2.3
+# Tačka 2.3
 # ===================================
-st.header("Tabela 2.3")
+st.header("Tačka 2.3")
+
+st.write("**Postavljena vrednost dozvoljenog amplitudnog napona σAₘ:**")
+SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon σAₘ (N/mm²):", value=50.0, format="%.6f")
+st.write(f"**σAₘ = {SigmaAM} N/mm²**")
 
 st.write("**Formula za Fₐ:**")
-st.latex(r'''F_a = \frac{F_z - F_p}{2}''')
+st.latex(r'''F_a = \frac{Fz - F_p}{2}''')
 Fa = (Fz - Fp) / 2
 st.write(f"**Fₐ = {Fa:.6f} N**")
 
