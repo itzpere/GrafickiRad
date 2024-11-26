@@ -15,7 +15,7 @@ F = st.number_input("Unesite silu F (N):", value=10000.0, format="%.6f")
 
 # Podesavanje σ_D0 i τ_D0 u zavisnosti od materijala
 if mnv == "E335":
-    sigmaD0 = 360
+    sigmaD0 = 350
     tauD0 = 215
 else:
     sigmaD0 = 310
