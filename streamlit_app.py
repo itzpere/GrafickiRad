@@ -259,31 +259,44 @@ else:
 # ===================================
 st.header("Tačka 2")
 
-z = st.number_input("Unesite broj z:", value=4.0, format="%.6f")
+# Unos broja z
+z = st.number_input("Unesite broj $z$:", value=4.0, format="%.6f")
 
-Reh = st.number_input("Unesite vrednost RₑH (N/mm²) iz tabele 3.5:", value=300.0, format="%.6f")
+# Unos vrednosti ReH
+Reh = st.number_input("Unesite vrednost $R_{eH}$ (N/mm²) iz tabele 3.5:", value=300.0, format="%.6f")
 
-st.write("**Formula za Fᵣ:**")
-st.latex(r'''F_r = \frac{F}{z}''')
+# Izračunavanje Fr
+st.write("**Formula za $F_r$:**")
+st.latex(r"""F_r = \frac{F}{z}""")
 Fr = F / z
-st.write(f"**Fᵣ = {Fr:.6f} N**")
+st.write(f"**$F_r = {Fr:.6f}$ N**")
 
-st.write("**Formula za Fₚ:**")
-st.latex(r'''F_p = 3 \cdot F_r''')
-Fp = 3 * Fr
-st.write(f"**Fₚ = {Fp:.6f} N**")
+# Izračunavanje Fp
+st.write("**Formula za $F_p$:**")
+st.latex(r"""F_p = 3 \cdot F_r""")
+Fpt = 3 * Fr
+st.write(f"**$F_p = {Fpt:.6f}$ N**")
 
-st.write("**Formula za Aₛ:**")
-st.latex(r'''A_s = \frac{F_p}{0.6 \cdot R_{eH}}''')
-Ast = Fp / (0.6 * Reh)
-st.write(f"**Aₛ = {Ast:.6f} mm²**")
+# Izračunavanje Ast
+st.write("**Formula za $A_s$:**")
+st.latex(r"""A_s = \frac{F_p}{0.6 \cdot R_{eH}}""")
+Ast = Fpt / (0.6 * Reh)
+st.write(f"**$A_s = {Ast:.6f}$ mm²**")
 
 st.info("Uzmi prvi veći presek iz tabele 3.1")
-As = st.number_input("Unesite vrednost Aₛ (mm²) iz tabele 3.1:", value=58.0, format="%.6f")
 
-st.write("**Provera:**")
-Fp_check = 0.6 * As * Reh
-st.write(f"Fₚ = 0.6 × Aₛ × RₑH = **{Fp_check:.6f} N**")
+# Unos vrednosti As iz tabele 3.1
+As = st.number_input("Unesite vrednost $A_s$ (mm²) iz tabele 3.1:", value=58.0, format="%.6f")
+
+# Provera da li se Fp povećalo
+st.write("**Provera da li se $F_p$ povećalo:**")
+Fp = 0.6 * As * Reh
+st.write(f"**$F_p$ (novo) = 0.6 \times A_s \times R_{{eH}} = {Fp:.6f} \, \text{{N}}**")
+
+if Fp > Fpt:
+    st.success("Pošto je novo $F_p$ veće od početnog $F_p$, provera je uspešna. I ono ce se koristiit u daljem proračunu.")
+else:
+    st.error("Provera nije uspešna, novo $F_p$ nije veće od početnog $F_p$.")
 
 # ===================================
 # Tačka 2.1
