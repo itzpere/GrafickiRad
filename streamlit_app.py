@@ -282,7 +282,7 @@ st.info("Uzmi prvi veći presek iz tabele 3.1")
 As = st.number_input("Unesite vrednost Aₛ (mm²) iz tabele 3.1:", value=58.0, format="%.6f")
 
 st.write("**Provera:**")
-Fp_check = 0.6 * Ast * Reh
+Fp_check = 0.6 * As * Reh
 st.write(f"Fₚ = 0.6 × Aₛ × RₑH = **{Fp_check:.6f} N**")
 
 # ===================================
