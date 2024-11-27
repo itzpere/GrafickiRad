@@ -339,7 +339,6 @@ st.write(f"**Sσ = {S_sigma:.6f}**")
 
 st.write("**Postavljena vrednost faktora trenja μ:**")
 f_val = st.number_input("Unesite faktor trenja μ:", value=0.15, format="%.6f")
-st.write(f"**μ = {f_val}**")
 
 st.write("**Formula za ρ:**")
 st.latex(r"""\rho = \arctan\left( \frac{μ}{\cos 30^\circ} \right)""")
