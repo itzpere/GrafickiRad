@@ -310,9 +310,8 @@ d2_new = st.number_input("Unesite srednji prečnik navoja d2 (mm):", value=21.5,
 d3_new = st.number_input("Unesite prečnik d3 (mm):", value=30.0, format="%.6f")
 
 # Unos ugla fi u stepenima
-phi_deg = st.number_input("Unesite ugao navoja φ (stepeni):", value=7.125, format="%.6f")
+phi_deg = st.number_input("Unesite ugao navoja fi (stepeni):", value=7.125, format="%.6f")
 fi_new = np.radians(phi_deg)
-st.write(f"**φ = {phi_deg:.6f}°**")
 
 # ===================================
 # Tačka 2.1
@@ -347,6 +346,10 @@ rho_deg = np.degrees(rho_val)
 st.write(f"**ρ = {rho_deg:.6f}°**")
 
 st.write("**Formula za Wp:**")
+
+ds = (d2_new + d3_new) / 2
+st.write(f"**ds = {ds:.6f} mm**")
+
 st.latex(r"""W_p = 0.2 \cdot \left( \frac{d_{2} + d_{3}}{2} \right)^3""")
 Wp = 0.2 * ((d2_new + d3_new) / 2) ** 3
 st.write(f"**Wp = {Wp:.6f} mm³**")
