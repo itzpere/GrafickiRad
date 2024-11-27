@@ -275,11 +275,14 @@ st.write(f"**Fₚ = {Fp:.6f} N**")
 
 st.write("**Formula za Aₛ:**")
 st.latex(r'''A_s = \frac{F_p}{0.6 \cdot R_{eH}}''')
-As = Fp / (0.6 * Reh)
-st.write(f"**Aₛ = {As:.6f} mm²**")
+Ast = Fp / (0.6 * Reh)
+st.write(f"**Aₛ = {Ast:.6f} mm²**")
+
+st.info("Uzmi prvi veći presek iz tabele 3.1")
+As = st.number_input("Unesite vrednost Aₛ (mm²) iz tabele 3.1:", value=58.0, format="%.6f")
 
 st.write("**Provera:**")
-Fp_check = 0.6 * As * Reh
+Fp_check = 0.6 * Ast * Reh
 st.write(f"Fₚ = 0.6 × Aₛ × RₑH = **{Fp_check:.6f} N**")
 
 # ===================================
