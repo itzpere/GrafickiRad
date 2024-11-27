@@ -306,11 +306,8 @@ else:
 st.header("Unesite nove parametre za dalji proračun")
 
 # Unos novih vrednosti
-d_new = st.number_input("Unesite prečnik navoja d (mm):", value=24.0, format="%.6f")
-P_new = st.number_input("Unesite korak navoja P (mm):", value=5.0, format="%.6f")
 d2_new = st.number_input("Unesite srednji prečnik navoja d2 (mm):", value=21.5, format="%.6f")
 d3_new = st.number_input("Unesite prečnik d3 (mm):", value=30.0, format="%.6f")
-A3_new = st.number_input("Unesite površinu A3 (mm²):", value=200.0, format="%.6f")
 
 # Unos ugla fi u stepenima
 phi_deg = st.number_input("Unesite ugao navoja φ (stepeni):", value=7.125, format="%.6f")
