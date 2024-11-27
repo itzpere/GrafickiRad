@@ -292,7 +292,7 @@ As = st.number_input("Unesite vrednost $A_s$ (mm²) iz tabele 3.1:", value=58.0,
 st.write("**Provera da li se $F_p$ povećalo:**")
 Fp = 0.6 * As * Reh
 st.latex(r"""F_p^{novo} = 0.6 \times A_s \times R_{eH}""")
-st.write(f"**$F_p (novo) = {Fp:.6f} \, \text{{N}}$**")
+st.write(f"**$F_p (novo) = {Fp:.6f} \, N$**")
 
 if Fp > Fpt:
     st.success("Pošto je novo $F_p$ veće od početnog $F_p$, provera je uspešna. I ono ce se koristiit u daljem proračunu.")
