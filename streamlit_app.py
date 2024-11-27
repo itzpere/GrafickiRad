@@ -337,12 +337,12 @@ st.latex(r"""S_{\sigma} = \frac{R_{eH}}{\sigma}""")
 S_sigma = Reh / sigma
 st.write(f"**Sσ = {S_sigma:.6f}**")
 
-st.write("**Postavljena vrednost faktora trenja f:**")
-f_val = st.number_input("Unesite faktor trenja f:", value=0.15, format="%.6f")
-st.write(f"**f = {f_val}**")
+st.write("**Postavljena vrednost faktora trenja μ:**")
+f_val = st.number_input("Unesite faktor trenja μ:", value=0.15, format="%.6f")
+st.write(f"**μ = {f_val}**")
 
 st.write("**Formula za ρ:**")
-st.latex(r"""\rho = \arctan\left( \frac{f}{\cos 30^\circ} \right)""")
+st.latex(r"""\rho = \arctan\left( \frac{μ}{\cos 30^\circ} \right)""")
 rho_val = np.arctan(f_val / np.cos(np.radians(30)))
 rho_deg = np.degrees(rho_val)
 st.write(f"**ρ = {rho_deg:.6f}°**")
