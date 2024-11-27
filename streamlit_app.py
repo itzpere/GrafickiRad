@@ -348,12 +348,12 @@ rho_deg = np.degrees(rho_val)
 st.write(f"**ρ = {rho_deg:.6f}°**")
 
 st.write("**Formula za Wp:**")
-st.latex(r"""W_p = 0.2 \cdot \left( \frac{d_{2new} + d_{3new}}{2} \right)^3""")
+st.latex(r"""W_p = 0.2 \cdot \left( \frac{d_{2} + d_{3}}{2} \right)^3""")
 Wp = 0.2 * ((d2_new + d3_new) / 2) ** 3
 st.write(f"**Wp = {Wp:.6f} mm³**")
 
 st.write("**Formula za Tt:**")
-st.latex(r"""T_t = \frac{F_p \cdot d_{2new}}{2} \cdot \tan (\varphi + \rho)""")
+st.latex(r"""T_t = \frac{F_p \cdot d_{2}}{2} \cdot \tan (\varphi + \rho)""")
 Tt = (Fp * d2_new) / 2 * np.tan(fi_new + rho_val)
 st.write(f"**Tt = {Tt:.6f} N·mm**")
 
