@@ -260,139 +260,159 @@ else:
 st.header("Tačka 2")
 
 # Unos broja z
-z = st.number_input("Unesite broj $z$:", value=4.0, format="%.6f")
+z = st.number_input("Unesite broj z:", value=4.0, format="%.6f")
 
-# Unos vrednosti ReH
+# Unos vrednosti R_eH
 Reh = st.number_input("Unesite vrednost $R_{eH}$ (N/mm²) iz tabele 3.5:", value=300.0, format="%.6f")
 
-# Izračunavanje Fr
+# Izračunavanje $F_r$
 st.write("**Formula za $F_r$:**")
 st.latex(r"""F_r = \frac{F}{z}""")
 Fr = F / z
 st.write(f"**$F_r = {Fr:.6f}$ N**")
 
-# Izračunavanje Fp
+# Izračunavanje početnog $F_p$
 st.write("**Formula za $F_p$:**")
 st.latex(r"""F_p = 3 \cdot F_r""")
-Fpt = 3 * Fr
-st.write(f"**$F_p = {Fpt:.6f}$ N**")
+Fp_initial = 3 * Fr
+st.write(f"**$F_p = {Fp_initial:.6f}$ N**")
 
-# Izračunavanje Ast
-st.write("**Formula za $A_s$:**")
+# Izračunavanje teorijske površine $A_s$
+st.write("**Formula za $A_s$ (teorijsko):**")
 st.latex(r"""A_s = \frac{F_p}{0.6 \cdot R_{eH}}""")
-Ast = Fpt / (0.6 * Reh)
-st.write(f"**$A_s = {Ast:.6f}$ mm²**")
+As_theoretical = Fp_initial / (0.6 * Reh)
+st.write(f"**$A_s = {As_theoretical:.6f}$ mm²**")
 
 st.info("Uzmi prvi veći presek iz tabele 3.1")
 
-# Unos vrednosti As iz tabele 3.1
+# Unos vrednosti $A_s$ iz tabele 3.1
 As = st.number_input("Unesite vrednost $A_s$ (mm²) iz tabele 3.1:", value=58.0, format="%.6f")
 
-# Provera da li se Fp povećalo
-st.write("**Provera da li se $F_p$ povećalo:**")
-Fp = 0.6 * As * Reh
+# Provera da li se $F_p$ povećalo
+st.write("**Provera da li se $F_p$ povećalo sa novim $A_s$:**")
+st.write("**Formula za novo $F_p$:**")
 st.latex(r"""F_p^{novo} = 0.6 \times A_s \times R_{eH}""")
-st.write(f"**$F_p (novo) = {Fp:.6f} \, N$**")
+Fp = 0.6 * As * Reh
+st.write(f"**$F_p^{{novo}} = {Fp:.6f} \, \text{{N}}$**")
 
-if Fp > Fpt:
-    st.success("Pošto je novo $F_p$ veće od početnog $F_p$, provera je uspešna. I ono ce se koristiit u daljem proračunu.")
+if Fp >= Fp_initial:
+    st.success("Pošto je novo $F_p$ veće ili jednako početnom $F_p$, provera je uspešna i koristi se u daljem proračunu.")
 else:
-    st.error("Provera nije uspešna, novo $F_p$ nije veće od početnog $F_p$.")
+    st.error("Provera nije uspešna, novo $F_p$ nije veće ili jednako početnom $F_p$.")
+    
+st.info("Zapisi novi metricki navoj na papiru kao Md ili ti npr M10")
+
+# ===================================
+# Ponovno unošenje parametara
+# ===================================
+st.header("Unesite nove parametre iz tabele 3.1 za dalji proračun")
+
+# Unos novih vrednosti
+d2_new = st.number_input("Unesite srednji prečnik navoja $d_2$ (mm):", value=21.5, format="%.6f")
+d3_new = st.number_input("Unesite prečnik $d_3$ (mm):", value=30.0, format="%.6f")
+
+# Unos ugla $\varphi$ u stepenima
+phi_deg = st.number_input("Unesite ugao navoja $\varphi$ (stepeni):", value=7.125, format="%.6f")
+fi_new = np.radians(phi_deg)
+st.write(f"**$\varphi = {phi_deg:.6f}^\circ$**")
 
 # ===================================
 # Tačka 2.1
 # ===================================
 st.header("Tačka 2.1")
 
-st.write("**Postavljena vrednost dozvoljenog napona smicanja τₜ:**")
-tauT = st.number_input("Unesite dozvoljeni napon smicanja τₜ (N/mm²):", value=200.0, format="%.6f")
+st.write("**Postavljena vrednost dozvoljenog napona smicanja $\tau_t$:**")
+tauT = st.number_input("Unesite dozvoljeni napon smicanja $\tau_t$ (N/mm²):", value=200.0, format="%.6f")
+st.write(f"**$\tau_t = {tauT}$ N/mm²**")
 
-st.write("**Formula za σ:**")
-st.latex(r'''\sigma = \frac{F_p}{A_s}''')
+st.write("**Postavljena vrednost dozvoljenog amplitudnog napona $\sigma_{Am}$:**")
+SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon $\sigma_{Am}$ (N/mm²):", value=50.0, format="%.6f")
+st.write(f"**$\sigma_{{Am}} = {SigmaAM}$ N/mm²**")
+
+st.write("**Formula za $\sigma$:**")
+st.latex(r"""\sigma = \frac{F_p}{A_s}""")
 sigma = Fp / As
-st.write(f"**σ = {sigma:.6f} N/mm²**")
+st.write(f"**$\sigma = {sigma:.6f}$ N/mm²**")
 
 st.write("**Koeficijent sigurnosti za zatezanje:**")
-st.latex(r'''S_{\sigma} = \frac{R_{eH}}{\sigma}''')
+st.latex(r"""S_{\sigma} = \frac{R_{eH}}{\sigma}""")
 S_sigma = Reh / sigma
-st.write(f"**Sσ = {S_sigma:.6f}**")
+st.write(f"**$S_{{\sigma}} = {S_sigma:.6f}$**")
 
-st.write("**Postavljena vrednost faktora trenja μ:**")
-f_val = 0.15
-st.write(f"**μ = {f_val}**")
+st.write("**Postavljena vrednost faktora trenja $f$:**")
+f_val = st.number_input("Unesite faktor trenja $f$:", value=0.15, format="%.6f")
+st.write(f"**$f = {f_val}$**")
 
-st.write("**Formula za ρ (rho):**")
-st.latex(r'''\rho = \arctan\left( \frac{\mu}{\cos 30^\circ} \right)''')
+st.write("**Formula za $\rho$:**")
+st.latex(r"""\rho = \arctan\left( \frac{f}{\cos 30^\circ} \right)""")
 rho_val = np.arctan(f_val / np.cos(np.radians(30)))
-st.write(f"**ρ = {np.degrees(rho_val):.6f}°**")
+rho_deg = np.degrees(rho_val)
+st.write(f"**$\rho = {rho_deg:.6f}^\circ$**")
 
-st.write("**Formula za Wₚ:**")
-st.latex(r'''W_p = 0.2 \cdot \left( \frac{d_2 + d_3}{2} \right)^3''')
-Wp = 0.2 * ((d2 + d3) / 2) ** 3
-st.write(f"**Wₚ = {Wp:.6f} mm³**")
+st.write("**Formula za $W_p$:**")
+st.latex(r"""W_p = 0.2 \cdot \left( \frac{d_{2new} + d_{3new}}{2} \right)^3""")
+Wp = 0.2 * ((d2_new + d3_new) / 2) ** 3
+st.write(f"**$W_p = {Wp:.6f}$ mm³**")
 
-st.write("**Formula za Tₜ:**")
-st.latex(r'''T_t = \frac{F_p \cdot d_2}{2} \cdot \tan (\varphi + \rho)''')
-Tt = (Fp * d2) / 2 * np.tan(fi + rho_val)
-st.write(f"**Tₜ = {Tt:.6f} N·mm**")
+st.write("**Formula za $T_t$:**")
+st.latex(r"""T_t = \frac{F_p \cdot d_{2new}}{2} \cdot \tan (\varphi + \rho)""")
+Tt = (Fp * d2_new) / 2 * np.tan(fi_new + rho_val)
+st.write(f"**$T_t = {Tt:.6f}$ N·mm**")
 
-st.write("**Formula za τ:**")
-st.latex(r'''\tau = \frac{T_t}{W_p}''')
+st.write("**Formula za $\tau$:**")
+st.latex(r"""\tau = \frac{T_t}{W_p}""")
 tau = Tt / Wp
-st.write(f"**τ = {tau:.6f} N/mm²**")
+st.write(f"**$\tau = {tau:.6f}$ N/mm²**")
 
 st.write("**Koeficijent sigurnosti za smicanje:**")
-st.latex(r'''S_{\tau} = \frac{\tau_T}{\tau}''')
+st.latex(r"""S_{\tau} = \frac{\tau_t}{\tau}""")
 S_tau = tauT / tau
-st.write(f"**Sτ = {S_tau:.6f}**")
+st.write(f"**$S_{{\tau}} = {S_tau:.6f}$**")
 
 st.write("**Ukupni koeficijent sigurnosti:**")
-st.latex(r'''S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}''')
+st.latex(r"""S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}""")
 S_total = (S_sigma * S_tau) / np.sqrt(S_sigma ** 2 + S_tau ** 2)
-st.write(f"**S = {S_total:.6f}**")
-st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
+st.write(f"**$S = {S_total:.6f}$**")
+st.info("Veće od **$S_{\text{min}} = 1.25 – 2.5$** (proveriti)")
 
 # ===================================
 # Tačka 2.2
 # ===================================
 st.header("Tačka 2.2")
 
-st.write("**Formula za Fz:**")
-st.latex(r'''Fz = F_p + \frac{1}{6} F_r''')
+st.write("**Formula za $F_z$:**")
+st.latex(r"""F_z = F_p + \frac{1}{6} F_r""")
 Fz = Fp + (1 / 6) * Fr
-st.write(f"**Fz = {Fz:.6f} N**")
+st.write(f"**$F_z = {Fz:.6f}$ N**")
 
-st.write("**Formula za σ:**")
-st.latex(r'''\sigma = \frac{Fz}{A_s}''')
+st.write("**Formula za $\sigma$:**")
+st.latex(r"""\sigma = \frac{F_z}{A_s}""")
 sigma = Fz / As
-st.write(f"**σ = {sigma:.6f} N/mm²**")
+st.write(f"**$\sigma = {sigma:.6f}$ N/mm²**")
 
 st.write("**Koeficijent sigurnosti za zatezanje:**")
-st.latex(r'''S_{\sigma} = \frac{R_{eH}}{\sigma}''')
+st.latex(r"""S_{\sigma} = \frac{R_{eH}}{\sigma}""")
 S_sigma = Reh / sigma
-st.write(f"**Sσ = {S_sigma:.6f}**")
-st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
+st.write(f"**$S_{{\sigma}} = {S_sigma:.6f}$**")
+st.info("Veće od **$S_{\text{min}} = 1.25 – 2.5$** (proveriti)")
 
 # ===================================
 # Tačka 2.3
 # ===================================
 st.header("Tačka 2.3")
 
-st.write("**Postavljena vrednost dozvoljenog amplitudnog napona σAₘ:**")
-SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon σAₘ (N/mm²):", value=50.0, format="%.6f")
-
-st.write("**Formula za Fₐ:**")
-st.latex(r'''F_a = \frac{Fz - F_p}{2}''')
+st.write("**Formula za $F_a$:**")
+st.latex(r"""F_a = \frac{F_z - F_p}{2}""")
 Fa = (Fz - Fp) / 2
-st.write(f"**Fₐ = {Fa:.6f} N**")
+st.write(f"**$F_a = {Fa:.6f}$ N**")
 
-st.write("**Formula za σₐ:**")
-st.latex(r'''\sigma_a = \frac{F_a}{A_s}''')
+st.write("**Formula za $\sigma_a$:**")
+st.latex(r"""\sigma_a = \frac{F_a}{A_s}""")
 sigma_a = Fa / As
-st.write(f"**σₐ = {sigma_a:.6f} N/mm²**")
+st.write(f"**$\sigma_a = {sigma_a:.6f}$ N/mm²**")
 
 st.write("**Koeficijent sigurnosti za amplitudni napon:**")
-st.latex(r'''S_a = \frac{\sigma_{AM}}{\sigma_a}''')
+st.latex(r"""S_a = \frac{\sigma_{Am}}{\sigma_a}""")
 S_a = SigmaAM / sigma_a
-st.write(f"**Sₐ = {S_a:.6f}**")
-st.info("Veće od **Smin = 1.25 – 2.5** (proveriti) + komentar")
+st.write(f"**$S_a = {S_a:.6f}$**")
+st.info("Veće od **$S_{\text{min}} = 1.25 – 2.5$** (proveriti)")
