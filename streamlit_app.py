@@ -3,416 +3,504 @@ import numpy as np
 import pandas as pd
 
 st.title("Proračun navojnog vretena")
-st.info("Ovaj program služi za izračunavanje prvih 3 tačaka grafičkog rada. Idalje treba pratiti uputstvo radi pravilnog ispisivanja na papiru.")
+st.info("Ovaj program služi za izračunavanje prvih 3 tačaka grafičkog rada. I dalje treba pratiti uputstvo radi pravilnog ispisivanja na papiru.")
 
-# ===================================
-# Nulta tačka 0
-# ===================================
-st.header("Nulta tačka 0")
+st.markdown("""
+### Navigacija
 
-mnv = st.selectbox("Izaberite materijal navojnog vretena (mnv):", ["E335", "E295"])
-F = st.number_input("Unesite silu F (N):", value=10000.0, format="%.6f")
+- [Nulta tačka 0](#nulta_tacka_0)
+- [Tačka 1](#tacka1)
+- [Tačka 2](#tacka2)
+- [Tačka 4](#tacka4)
+- [Tačka 5](#tacka5)
 
-# Podesavanje σ_D0 i τ_D0 u zavisnosti od materijala
-if mnv == "E335":
-    sigmaD0 = 350
-    tauD0 = 215
-else:
-    sigmaD0 = 310
-    tauD0 = 205
+""")
 
-st.write("**Dozvoljeni napon zatezanja:**")
-st.latex(f'''\\sigma_{{D0}} = {sigmaD0} \\, \\text{{N/mm}}^2''')
-st.write("**Dozvoljeni napon smicanja:**")
-st.latex(f'''\\tau_{{D0}} = {tauD0} \\, \\text{{N/mm}}^2''')
+st.title("Globalni parametri")
+F = st.number_input("Unesite silu F (N):", value=10000.0, format="%f")
+h = st.number_input("Unesite hod navojnog vratena h (mm):", value=400.0, format="%f")
 
-st.write("**Formula za A₃:**")
-st.latex(r'''A_3 = \frac{1.3 \cdot F \cdot 2.5}{\sigma_{D0}}''')
 
-# Izračunavanje A₃
-A3 = (1.3 * F * 2.5) / sigmaD0
-st.write(f"**A₃ = {A3:.6f} mm²**")
 
-if A3 <= 104:
-    st.success("Odabrani navoj: **Tr 16x4**")
-else:
-    st.success("Odaberi prvi veći navoj iz tabele 3.2")
+def nulta_tacka():
+    # ===================================
+    # Nulta tačka 0
+    # ===================================
+    st.markdown('<a id="nulta_tacka_0"></a>', unsafe_allow_html=True)
 
-# ===================================
-# Nulta tačka 1
-# ===================================
-st.header("Nulta tačka 1")
+    st.title("Nulta tačka 0")
 
-# Konstante
-E = 206000  # Modul elastičnosti (N/mm²)
-st.write("**Modul elastičnosti E:**")
-st.latex(f'''E = {E} \\, \\text{{N/mm}}^2''')
-S = 7       # Koeficijent sigurnosti
-st.write("**Koeficijent sigurnosti S:**")
-st.latex(f'''S = {S}''')
+    mnv = st.selectbox("Izaberite materijal navojnog vretena (mnv):", ["E335", "E295"], key="mnv_nt")
 
-h = st.number_input("Unesite visinu h (mm):", value=400.0, format="%.6f")
-
-st.write("**Formula za d₃:**")
-st.latex(r'''d_3 = \sqrt[4]{ \frac{64 \cdot F \cdot S \cdot h^2}{\pi^3 \cdot E}}''')
-
-# Izračunavanje d₃
-d3 = ((64 * F * S * h ** 2) / (np.pi ** 3 * E)) ** (1 / 4)
-st.write(f"**d₃ ≥ {d3:.6f} mm**")
-st.info("Uzmi prvi veći prečnik iz tabele 3.2")
-
-# ===================================
-# Nulta tačka 2
-# ===================================
-st.header("Nulta tačka 2")
-
-d = st.number_input("Unesite prečnik navoja d (mm):", value=24.0, format="%.6f")
-P = st.number_input("Unesite korak navoja P (mm):", value=5.0, format="%.6f")
-d2 = st.number_input("Unesite srednji prečnik navoja d₂ (mm):", value=21.5, format="%.6f")
-
-H1 = P / 2
-st.write(f"**H₁ = {H1:.6f} mm**")
-
-results = []
-
-for pdoz in range(10, 21):
-    Zn_pre = F / (pdoz * d2 * np.pi * H1)
-    Zn = max(6, min(Zn_pre, 10))
-    if Zn_pre > 10:
-        continue
-    Ln = P * Zn
-    lower_bound = 1.3 * d
-    upper_bound = 1.6 * d
-    if lower_bound < Ln < upper_bound:
-        status = '✅ Odgovara'
+    # Podesavanje σ_D0 i τ_D0 u zavisnosti od materijala
+    if mnv == "E335":
+        sigmaD0 = 350
+        tauD0 = 215
     else:
-        status = '❌ Ne odgovara'
-    results.append({
-        'p_dož [N/mm²]': pdoz,
-        'Z_n pre': round(Zn_pre, 6),
-        'Z_n': Zn,
-        'L_n [mm]': round(Ln, 6),
-        'Status': status,
-        'Donja granica [mm]': round(lower_bound, 6),
-        'Gornja granica [mm]': round(upper_bound, 6),
-    })
-
-if not results:
-    st.error("Nema tačnih odgovora, izaberite druge parametre")
-else:
-    df = pd.DataFrame(results)
-    st.write(f"**Rezultati za Tr {d} x {P}:**")
-    st.dataframe(df)
-
-# ===================================
-# Ponovno unošenje parametara
-# ===================================
-st.header("Unesite parametre za dalji proračun")
-
-d = st.number_input("Ponovo unesite prečnik navoja d (mm):", value=d, format="%.6f")
-P = st.number_input("Ponovo unesite korak navoja P (mm):", value=P, format="%.6f")
-d2 = st.number_input("Ponovo unesite srednji prečnik navoja d₂ (mm):", value=d2, format="%.6f")
-d3 = st.number_input("Unesite prečnik d₃ (mm):", value=d3, format="%.6f")
-A3 = st.number_input("Unesite površinu A₃ (mm²):", value=A3, format="%.6f")
-Ln = st.number_input("Unesite dužinu navoja Lₙ (mm):", value=results[0]['L_n [mm]'] if results else 1, format="%.6f")
-
-# ===================================
-# Nulta tačka 3
-# ===================================
-st.header("Nulta tačka 3")
-
-st.write("**Formula za ϕ:**")
-st.latex(r'''\varphi = \arctan\left( \frac{P}{\pi \cdot d_2} \right)''')
-
-fi = np.arctan(P / (d2 * np.pi))
-st.write(f"**ϕ = {np.degrees(fi):.6f}°**")
-
-st.write("**Postavljena vrednost faktora trenja μ:**")
-f = 0.09
-st.write(f"**μ = {f}**")
-
-st.write("**Formula za ρ:**")
-st.latex(r'''\rho = \arctan\left( \frac{\mu}{\cos 15^\circ} \right)''')
-rho = np.arctan(f / np.cos(np.radians(15)))
-st.write(f"**ρ = {np.degrees(rho):.6f}°**")
-
-st.write("**Formula za Tₙₚ:**")
-st.latex(r'''T_{np} = \frac{F \cdot d_2}{2} \cdot \tan(\varphi + \rho)''')
-Tnp = (F * d2) / 2 * np.tan(fi + rho)
-st.write(f"**Tₙₚ = {Tnp:.6f} N/mm²**")
-
-# ===================================
-# Tačka 1.1
-# ===================================
-st.header("Tačka 1.1")
-
-st.write("**Formula za σ:**")
-st.latex(r'''\sigma = \frac{F}{A_3}''')
-sigma = F / A3
-st.write(f"**σ = {sigma:.6f} N/mm²**")
-
-st.write("**Koeficijent sigurnosti za zatezanje:**")
-st.latex(r'''S_{\sigma} = \frac{\sigma_{D0}}{\sigma}''')
-S_sigma = sigmaD0 / sigma
-st.write(f"**Sσ = {S_sigma:.6f}**")
-
-st.write("**Formula za τ:**")
-st.latex(r'''\tau = \frac{T_{np}}{0.2 \cdot d_3^3}''')
-tau = Tnp / (0.2 * d3 ** 3)
-st.write(f"**τ = {tau:.6f} N/mm²**")
-
-st.write("**Koeficijent sigurnosti za smicanje:**")
-st.latex(r'''S_{\tau} = \frac{\tau_{D0}}{\tau}''')
-S_tau = tauD0 / tau
-st.write(f"**Sτ = {S_tau:.6f}**")
-
-st.write("**Ukupni koeficijent sigurnosti:**")
-st.latex(r'''S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}''')
-S_total = (S_sigma * S_tau) / np.sqrt(S_sigma ** 2 + S_tau ** 2)
-st.write(f"**Ukupni koeficijent sigurnosti S = {S_total:.6f}**")
-st.info("Treba da bude veće od **Smin = 1.5 – 2** + komentar")
-
-# ===================================
-# Tačka 1.2
-# ===================================
-st.header("Tačka 1.2")
-
-st.write("**Postavljena vrednost Bₗ:**")
-Bl = st.number_input("Unesite vrednost Bₗ (mm):", value=19.0, format="%.6f")
-
-i = d3 / 4
-st.write(f"**i = {i:.6f} mm**")
-
-st.write("**Formula za Lₖ:**")
-st.latex(r'''L_k = \frac{L_n}{2} + h + 10 + \frac{B_l}{2}''')
-Lk = (Ln / 2) + h + 10 + (Bl / 2)
-st.write(f"**Lₖ = {Lk:.6f} mm**")
-
-st.write("**Formula za λ (lambda):**")
-st.latex(r'''\lambda = \frac{L_k}{i}''')
-lamda = Lk / i
-st.write(f"**λ = {lamda:.6f}**")
-
-if lamda <= 89:
-    st.info("Za **σₖ** koristi se Tetmajerov obrazac zato što je λ < 89")
-    st.latex(r'''\sigma_K = 335 - 0.62 \cdot \lambda''')
-    sigmaK = 335 - 0.62 * lamda
-    st.write(f"**σₖ = {sigmaK:.6f} N/mm²**")
-else:
-    st.info("Za **σₖ** koristi se Ojlerov obrazac zato što je λ ≥ 89")
-    st.latex(r'''\sigma_K = \frac{E \cdot \pi^2}{\lambda^2}''')
-    sigmaK = (E * np.pi ** 2) / (lamda ** 2)
-    st.write(f"**σₖ = {sigmaK:.6f} N/mm²**")
-
-st.write("**Izračunavanje σᵢ:**")
-st.latex(r'''\sigma_i = \sqrt{\sigma^2 + 3 \tau^2}''')
-sigma_i = np.sqrt(sigma ** 2 + 3 * tau ** 2)
-st.write(f"**σᵢ = {sigma_i:.6f} N/mm²**")
-
-st.write("**Koeficijent sigurnosti Sᵢ:**")
-st.latex(r'''S_i = \frac{\sigma_K}{\sigma_i}''')
-S_i = sigmaK / sigma_i
-st.write(f"**Sᵢ = {S_i:.6f}**")
-
-# ===================================
-# Tačka 1.3
-# ===================================
-st.header("Tačka 1.3")
-
-st.write("**Formula za p:**")
-st.latex(r'''p = \frac{F \cdot P}{L_n \cdot d_2 \cdot \pi \cdot H_1}''')
-p = (F * P) / (Ln * d2 * np.pi * H1)
-st.write(f"**p = {p:.6f} N/mm²**")
-if 10 <= p <= 20:
-    st.success("Rezultat zadovoljava uslov (**10 ≤ p ≤ 20**)")
-else:
-    st.warning("Rezultat ne zadovoljava uslov (**10 ≤ p ≤ 20**)")
-st.info("Ovo je provera nulte tačke i treba napisati komentar")
-
-# ===================================
-# Tačka 1.4
-# ===================================
-st.header("Tačka 1.4")
-
-st.write("**Formula za ηₙₚ:**")
-st.latex(r'''\eta_{np} = \frac{\tan \varphi}{\tan (\varphi + \rho)}''')
-eta_np = np.tan(fi) / np.tan(fi + rho)
-st.write(f"**ηₙₚ = {eta_np:.6f}**")
-
-st.write("**Formula za ηₙᵥ:**")
-st.latex(r'''\eta_{nv} = 0.9 \cdot \eta_{np}''')
-eta_nv = 0.9 * eta_np
-st.write(f"**ηₙᵥ = {eta_nv:.6f}**")
-
-# ===================================
-# Tačka 1.5
-# ===================================
-st.header("Tačka 1.5")
-
-if fi > rho:
-    st.warning("**Navoj nije samokočiv**")
-else:
-    st.success("**Navoj je samokočiv**")
-
-# ===================================
-# Tačka 2
-# ===================================
-st.header("Tačka 2")
-
-# Unos broja z
-z = st.number_input("Unesite broj z:", value=4.0, format="%.6f")
-
-# Unos vrednosti Reh
-Reh = st.number_input("Unesite vrednost R_eH (N/mm²) iz tabele 3.5:", value=300.0, format="%.6f")
-
-# Izračunavanje Fr
-st.write("**Formula za Fr:**")
-st.latex(r"""F_r = \frac{F}{z}""")
-Fr = F / z
-st.write(f"**Fr = {Fr:.6f} N**")
-
-# Izračunavanje početnog Fp
-st.write("**Formula za Fp:**")
-st.latex(r"""F_p = 3 \cdot F_r""")
-Fp_initial = 3 * Fr
-st.write(f"**Fp = {Fp_initial:.6f} N**")
-
-# Izračunavanje teorijske površine As
-st.write("**Formula za As (teorijsko):**")
-st.latex(r"""A_s = \frac{F_p}{0.6 \cdot R_{eH}}""")
-As_theoretical = Fp_initial / (0.6 * Reh)
-st.write(f"**As = {As_theoretical:.6f} mm²**")
-
-st.info("Uzmi prvi veći presek iz tabele 3.1")
-
-# Unos vrednosti As iz tabele 3.1
-As = st.number_input("Unesite vrednost As (mm²) iz tabele 3.1:", value=58.0, format="%.6f")
-
-# Provera da li se Fp povećalo
-st.write("**Provera da li se Fp povećalo sa novim As:**")
-st.write("**Formula za novo Fp:**")
-st.latex(r"""F_p^{novo} = 0.6 \times A_s \times R_{eH}""")
-Fp = 0.6 * As * Reh
-st.write(f"**Fp_novo = {Fp:.6f} N**")
-
-if Fp >= Fp_initial:
-    st.success("Pošto je novo Fp veće ili jednako početnom Fp, provera je uspešna i koristi se u daljem proračunu.")
-else:
-    st.error("Provera nije uspešna, novo Fp nije veće ili jednako početnom Fp.")
-
-# ===================================
-# Ponovno unošenje parametara
-# ===================================
-st.header("Unesite nove parametre za dalji proračun")
-
-# Unos novih vrednosti
-d2_new = st.number_input("Unesite srednji prečnik navoja d2 (mm):", value=9.026, format="%.6f")
-d3_new = st.number_input("Unesite prečnik d3 (mm):", value=8.16, format="%.6f")
-
-# Unos ugla fi u stepenima
-phi_deg = st.number_input("Unesite ugao navoja fi (stepeni):", value=3.03, format="%.6f")
-fi_new = np.radians(phi_deg)
-
-# ===================================
-# Tačka 2.1
-# ===================================
-st.header("Tačka 2.1")
-
-st.write("**Postavljena vrednost dozvoljenog napona smicanja τt:**")
-tauT = st.number_input("Unesite dozvoljeni napon smicanja τt (N/mm²):", value=200.0, format="%.6f")
-st.write(f"**τt = {tauT} N/mm²**")
-
-st.write("**Postavljena vrednost dozvoljenog amplitudnog napona σAm:**")
-SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon σAm (N/mm²):", value=50.0, format="%.6f")
-st.write(f"**σAm = {SigmaAM} N/mm²**")
-
-st.write("**Formula za σ:**")
-st.latex(r"""\sigma = \frac{F_p}{A_s}""")
-sigma = Fp / As
-st.write(f"**σ = {sigma:.6f} N/mm²**")
-
-st.write("**Koeficijent sigurnosti za zatezanje:**")
-st.latex(r"""S_{\sigma} = \frac{R_{eH}}{\sigma}""")
-S_sigma = Reh / sigma
-st.write(f"**Sσ = {S_sigma:.6f}**")
-
-st.write("**Postavljena vrednost faktora trenja μ:**")
-f_val = st.number_input("Unesite faktor trenja μ:", value=0.15, format="%.6f")
-
-st.write("**Formula za ρ:**")
-st.latex(r"""\rho = \arctan\left( \frac{μ}{\cos 30^\circ} \right)""")
-rho_val = np.arctan(f_val / np.cos(np.radians(30)))
-rho_deg = np.degrees(rho_val)
-st.write(f"**ρ = {rho_deg:.6f}°**")
-
-st.write("**Formula za Wp:**")
-
-ds = (d2_new + d3_new) / 2
-st.write(f"**ds = {ds:.6f} mm**")
-
-st.latex(r"""W_p = 0.2 \cdot \left( \frac{d_{2} + d_{3}}{2} \right)^3""")
-Wp = 0.2 * ((d2_new + d3_new) / 2) ** 3
-st.write(f"**Wp = {Wp:.6f} mm³**")
-
-st.write("**Formula za Tt:**")
-st.latex(r"""T_t = \frac{F_p \cdot d_{2}}{2} \cdot \tan (\varphi + \rho)""")
-Tt = (Fp * d2_new) / 2 * np.tan(fi_new + rho_val)
-st.write(f"**Tt = {Tt:.6f} N·mm**")
-
-st.write("**Formula za τ:**")
-st.latex(r"""\tau = \frac{T_t}{W_p}""")
-tau = Tt / Wp
-st.write(f"**τ = {tau:.6f} N/mm²**")
-
-st.write("**Koeficijent sigurnosti za smicanje:**")
-st.latex(r"""S_{\tau} = \frac{\tau_t}{\tau}""")
-S_tau = tauT / tau
-st.write(f"**Sτ = {S_tau:.6f}**")
-
-st.write("**Ukupni koeficijent sigurnosti:**")
-st.latex(r"""S = \frac{S_{\sigma} \cdot S_{\tau}}{\sqrt{S_{\sigma}^2 + S_{\tau}^2}}""")
-S_total = (S_sigma * S_tau) / np.sqrt(S_sigma ** 2 + S_tau ** 2)
-st.write(f"**S = {S_total:.6f}**")
-st.info("Veće od **S_min = 1.25 – 2.5** (proveriti)")
-
-# ===================================
-# Tačka 2.2
-# ===================================
-st.header("Tačka 2.2")
-
-st.write("**Formula za Fz:**")
-st.latex(r"""F_z = F_p + \frac{1}{6} F_r""")
-Fz = Fp + (1 / 6) * Fr
-st.write(f"**Fz = {Fz:.6f} N**")
-
-st.write("**Formula za σ:**")
-st.latex(r"""\sigma = \frac{F_z}{A_s}""")
-sigma = Fz / As
-st.write(f"**σ = {sigma:.6f} N/mm²**")
-
-st.write("**Koeficijent sigurnosti za zatezanje:**")
-st.latex(r"""S_{\sigma} = \frac{R_{eH}}{\sigma}""")
-S_sigma = Reh / sigma
-st.write(f"**Sσ = {S_sigma:.6f}**")
-st.info("Veće od **S_min = 1.25 – 2.5** (proveriti)")
-
-# ===================================
-# Tačka 2.3
-# ===================================
-st.header("Tačka 2.3")
-
-st.write("**Formula za Fa:**")
-st.latex(r"""F_a = \frac{F_z - F_p}{2}""")
-Fa = (Fz - Fp) / 2
-st.write(f"**Fa = {Fa:.6f} N**")
-
-st.write("**Formula za σa:**")
-st.latex(r"""\sigma_a = \frac{F_a}{A_s}""")
-sigma_a = Fa / As
-st.write(f"**σa = {sigma_a:.6f} N/mm²**")
-
-st.write("**Koeficijent sigurnosti za amplitudni napon:**")
-st.latex(r"""S_a = \frac{\sigma_{Am}}{\sigma_a}""")
-S_a = SigmaAM / sigma_a
-st.write(f"**Sa = {S_a:.6f}**")
-st.info("Veće od **S_min = 1.25 – 2.5** (proveriti)")
+        sigmaD0 = 310
+        tauD0 = 205
+
+    st.write("**Dozvoljeni napon zatezanja:**")
+    st.latex(f'''\\sigma_{{D0}} = {sigmaD0} \\, \\text{{N/mm}}^2''')
+    st.write("**Dozvoljeni napon smicanja:**")
+    st.latex(f'''\\tau_{{D0}} = {tauD0} \\, \\text{{N/mm}}^2''')
+
+    # Izračunavanje A₃
+    st.write("**Formula za površinu A₃:**")
+    st.latex('''A_3 = \\frac{1.3 \\times F \\times 2.5}{\\sigma_{D0}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''A_3 = \\frac{{1.3 \\times {F:.8g} \\times 2.5}}{{{sigmaD0}}}''')
+
+    A3 = (1.3 * F * 2.5) / sigmaD0
+    st.write(f"**Izračunata vrednost A₃:**")
+    st.latex(f'''A_3 = {A3:.8g} \\, \\text{{mm}}^2''')
+
+    if A3 <= 104:
+        st.success("Odabrani navoj: **Tr 16x4**")
+    else:
+        st.success("Odaberi prvi veći navoj iz tabele 3.2")
+
+    # ===================================
+    # Nulta tačka 1
+    # ===================================
+    st.header("Nulta tačka 1")
+
+    # Konstante
+    E = 206000  # Modul elastičnosti (N/mm²)
+    st.write("**Modul elastičnosti E:**")
+    st.latex(f'''E = {E} \\, \\text{{N/mm}}^2''')
+    S = 7       # Koeficijent sigurnosti
+    st.write("**Koeficijent sigurnosti S:**")
+    st.latex(f'''S = {S}''')
+
+    # Izračunavanje d₃
+    st.write("**Formula za prečnik d₃:**")
+    st.latex('''d_3 = \\sqrt[4]{ \\frac{64 \\times F \\times S \\times h^2}{\\pi^3 \\times E} }''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''d_3 = \\sqrt[4]{{ \\frac{{64 \\times {F:.8g} \\times {S} \\times {h:.8g}^2}}{{\\pi^3 \\times {E}}} }}''')
+
+    d3 = ((64 * F * S * h ** 2) / (np.pi ** 3 * E)) ** 0.25
+    st.write("**Izračunata vrednost d₃:**")
+    st.latex(f'''d_3 = {d3:.8g} \\, \\text{{mm}}''')
+    st.write(f"**d₃ ≥ {d3:.8g} mm**")
+    st.info("Uzmi prvi veći prečnik iz tabele 3.2")
+
+    # ===================================
+    # Nulta tačka 2
+    # ===================================
+    st.header("Nulta tačka 2")
+
+    d = st.number_input("Unesite prečnik navoja d (mm):", value=24.0, format="%.8g", key="d_nt2")
+    P = st.number_input("Unesite korak navoja P (mm):", value=5.0, format="%.8g", key="P_nt2")
+    d2 = st.number_input("Unesite srednji prečnik navoja d₂ (mm):", value=21.5, format="%.8g", key="d2_nt2")
+
+    H1 = P / 2
+    st.write("**Izračunavanje H₁:**")
+    st.latex(f'''H_1 = \\frac{{P}}{{2}} = \\frac{{{P:.8g}}}{{2}} = {H1:.8g} \\, \\text{{mm}}''')
+
+    st.write("**Proračun broja navoja Zₙᵖʳᵉ i dužine navoja Lₙ:**")
+    st.latex('''Z_n^{pre} = \\frac{F}{p_{doz} \\times d_2 \\times \\pi \\times H_1}''')
+    st.latex(f'''Z_n^{{pre}} = \\frac{{{F:.8g}}}{{p_{{doz}} \\times {d2:.8g} \\times \\pi \\times {H1:.8g}}}''')
+
+    results = []
+
+    for pdoz in range(10, 21):
+        Zn_pre = F / (pdoz * d2 * np.pi * H1)
+        Zn = max(6, min(Zn_pre, 10))
+        if Zn_pre > 10:
+            continue
+        Ln = P * Zn
+        lower_bound = 1.3 * d
+        upper_bound = 1.6 * d
+        if lower_bound < Ln < upper_bound:
+            status = '✅ Odgovara'
+        else:
+            status = '❌ Ne odgovara'
+        results.append({
+            'p_dož [N/mm²]': pdoz,
+            'Z_n pre': round(Zn_pre, 6),
+            'Z_n': Zn,
+            'L_n [mm]': round(Ln, 6),
+            'Status': status,
+            'Donja granica [mm]': round(lower_bound, 6),
+            'Gornja granica [mm]': round(upper_bound, 6),
+        })
+
+    if not results:
+        st.error("Nema tačnih odgovora, izaberite druge parametre")
+    else:
+        df = pd.DataFrame(results)
+        st.write(f"**Rezultati za Tr {d} x {P}:**")
+        st.dataframe(df)
+
+    # ===================================
+    # Ponovno unošenje parametara
+    # ===================================
+    st.info("Nove parametre zapisati ispod racuna iz tabel 3.2")
+    st.subheader("Unesite nove parametre za dalji proračun")
+
+    P = st.number_input("Ponovo unesite korak navoja P (mm):", value=P, format="%.8g", key="P_nt_repeat")
+    d2 = st.number_input("Ponovo unesite srednji prečnik navoja d₂ (mm):", value=d2, format="%.8g", key="d2_nt_repeat")
+
+    # ===================================
+    # Nulta tačka 3
+    # ===================================
+    st.header("Nulta tačka 3")
+
+    # Izračunavanje ugla navoja φ
+    st.write("**Izračunavanje ugla navoja φ:**")
+    st.latex('''\\varphi = \\arctan\\left( \\frac{P}{\\pi \\times d_2} \\right)''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\varphi = \\arctan\\left( \\frac{{{P:.8g}}}{{\\pi \\times {d2:.8g}}} \\right)''')
+
+    fi = np.arctan(P / (d2 * np.pi))
+    fi_deg = np.degrees(fi)
+    st.write("**Izračunata vrednost ugla navoja φ:**")
+    st.latex(f'''\\varphi = {fi_deg:.8g}^\\circ''')
+
+    # Postavljena vrednost faktora trenja μ
+    f = 0.09
+    st.write("**Postavljena vrednost faktora trenja μ:**")
+    st.latex('''\\mu = 0.09''')
+
+    # Izračunavanje ugla trenja ρ
+    st.write("**Izračunavanje ugla trenja ρ:**")
+    st.latex('''\\rho = \\arctan\\left( \\frac{\\mu}{\\cos 15^\\circ} \\right)''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\rho = \\arctan\\left( \\frac{{{f}}}{{\\cos 15^\\circ}} \\right)''')
+
+    rho = np.arctan(f / np.cos(np.radians(15)))
+    rho_deg = np.degrees(rho)
+    st.write("**Izračunata vrednost ugla trenja ρ:**")
+    st.latex(f'''\\rho = {rho_deg:.8g}^\\circ''')
+
+    # Izračunavanje momenta na navojnom paru Tₙₚ
+    st.write("**Izračunavanje momenta na navojnom paru Tₙₚ:**")
+    st.latex('''T_{np} = \\frac{F \\times d_2}{2} \\times \\tan(\\varphi + \\rho)''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''T_{{np}} = \\frac{{{F:.8g} \\times {d2:.8g}}}{{2}} \\times \\tan({fi_deg:.8g}^\\circ + {rho_deg:.8g}^\\circ)''')
+
+    Tnp = (F * d2) / 2 * np.tan(fi + rho)
+    st.write("**Izračunata vrednost momenta Tₙₚ:**")
+    st.latex(f'''T_{{np}} = {Tnp:.8g} \\text{{ Nmm}}''')
+
+def tacka1():
+    # ===================================
+    # Tačka 1
+    # ===================================
+    st.markdown('<a id="tacka1"></a>', unsafe_allow_html=True)
+    st.header("Tačka 1")
+
+    # Unos potrebnih vrednosti
+    sigmaD0 = st.number_input("Unesite dozvoljeni napon zatezanja σ_D0 (N/mm²):", value=350.0, format="%.8g", key="sigmaD0_t1")
+    tauD0 = st.number_input("Unesite dozvoljeni napon smicanja τ_D0 (N/mm²):", value=215.0, format="%.8g", key="tauD0_t1")
+    A3 = st.number_input("Unesite površinu A₃ (mm²):", value=150.0, format="%.8g", key="A3_t1")
+    d3 = st.number_input("Unesite prečnik d₃ (mm):", value=30.0, format="%.8g", key="d3_t1")
+    d2 = st.number_input("Unesite srednji prečnik navoja d₂ (mm):", value=21.5, format="%.8g", key="d2_t1")
+    P = st.number_input("Unesite korak navoja P (mm):", value=5.0, format="%.8g", key="P_t1")
+    Ln = st.number_input("Unesite dužinu navoja Lₙ (mm):", value=75.0, format="%.8g", key="Ln_t1")
+    E = 206000  # Modul elastičnosti (N/mm²)
+
+    # H1 i ostale konstante
+    H1 = P / 2
+    f = 0.09
+    fi = np.arctan(P / (d2 * np.pi))
+    fi_deg = np.degrees(fi)
+    rho = np.arctan(f / np.cos(np.radians(15)))
+    rho_deg = np.degrees(rho)
+    Tnp = (F * d2) / 2 * np.tan(fi + rho)
+    sigma = F / A3
+    S_sigma = sigmaD0 / sigma
+    tau = Tnp / (0.2 * d3 ** 3)
+    S_tau = tauD0 / tau
+    S_total = (S_sigma * S_tau) / np.sqrt(S_sigma ** 2 + S_tau ** 2)
+
+    # Prikaz rezultata tačke 1.1
+    st.subheader("Tačka 1.1")
+
+    st.write("**Izračunavanje napona zatezanja σ:**")
+    st.latex('''\\sigma = \\frac{F}{A_3}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\sigma = \\frac{{{F:.8g}}}{{{A3:.8g}}}''')
+    st.write("**Izračunata vrednost napona σ:**")
+    st.latex(f'''\\sigma = {sigma:.8g} \\text{{ N/mm²}}''')
+    st.write("**Izracunavanje Sσ**")
+    st.latex(f'''S_σ = \\frac{{\\sigma_{{D0}}}}{{\\sigma}} = \\frac{{350}}{{{sigma:.8g}}} = {S_sigma:.8g}''') 
+
+    st.write("**Izračunavanje napona smicanja τ:**")
+    st.latex('''\\tau = \\frac{T_{np}}{0.2 \\times d_3^3}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\tau = \\frac{{{Tnp:.8g}}}{{0.2 \\times {d3:.8g}^3}}''')
+    st.write("**Izračunata vrednost napona τ:**")
+    st.latex(f'''\\tau = {tau:.8g} \\text{{ N/mm²}}''')
+    st.write("**Izračunavanje Sτ**")
+    st.latex(f'''S_τ = \\frac{{\\tau_{{D0}}}}{{\\tau}} = \\frac{{215}}{{{tau:.8g}}} = {S_tau:.8g}''')
+
+    st.write("**Ukupni koeficijent sigurnosti S:**")
+    st.latex('''S = \\frac{S_\\sigma \\times S_\\tau}{\\sqrt{S_\\sigma^2 + S_\\tau^2}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''S = \\frac{{{S_sigma:.8g} \\times {S_tau:.8g}}}{{\\sqrt{{{S_sigma:.8g}^2 + {S_tau:.8g}^2}}}}''')
+    st.write("**Izračunata vrednost S:**")
+    st.latex(f'''S = {S_total:.8g}''')
+    st.info("Treba da bude veće od **S_min = 1.5 – 2**")
+
+    # Tačka 1.2
+    st.subheader("Tačka 1.2")
+    Bl = st.number_input("Unesite vrednost Bₗ (mm):", value=19.0, format="%.8g", key="Bl_t1")
+    i = d3 / 4
+    Lk = (Ln / 2) + h + 10 + (Bl / 2)
+    lamda = Lk / i
+    st.write("**Izračunavanje vitkosti λ:**")
+    st.latex('''\\lambda = \\frac{L_k}{i}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\lambda = \\frac{{{Lk:.8g}}}{{{i:.8g}}}''')
+    st.write("**Izračunata vrednost λ:**")
+    st.latex(f'''\\lambda = {lamda:.8g}''')
+
+    if lamda <= 89:
+        sigmaK = 335 - 0.62 * lamda
+        st.write("**Za λ ≤ 89 dozvoljeni kritični napon σₖ se računa:**")
+        st.latex('''\\sigma_{k} = 335 - 0.62 \\times \\lambda''')
+        st.write("**Sa unetim vrednostima:**")
+        st.latex(f'''\\sigma_{{k}} = 335 - 0.62 \\times {lamda:.8g}''')
+    else:
+        sigmaK = (E * np.pi ** 2) / (lamda ** 2)
+        st.write("**Za λ > 89 dozvoljeni kritični napon σₖ se računa:**")
+        st.latex('''\\sigma_{k} = \\frac{E \\times \\pi^2}{\\lambda^2}''')
+        st.write("**Sa unetim vrednostima:**")
+        st.latex(f'''\\sigma_{{k}} = \\frac{{{E} \\times \\pi^2}}{{{lamda:.8g}^2}}''')
+
+    st.write("**Izračunata vrednost dozvoljenog kritičnog napona σₖ:**")
+    st.latex(f'''\\sigma_{{k}} = {sigmaK:.8g} \\text{{ N/mm²}}''')
+
+    sigma_i = np.sqrt(sigma ** 2 + 3 * tau ** 2)
+    st.write("**Izračunavanje ekvivalentnog napona σᵢ:**")
+    st.latex('''\\sigma_{i} = \\sqrt{ \\sigma^2 + 3 \\times \\tau^2 }''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\sigma_{{i}} = \\sqrt{{ {sigma:.8g}^2 + 3 \\times {tau:.8g}^2 }}''')
+    st.write("**Izračunata vrednost σᵢ:**")
+    st.latex(f'''\\sigma_{{i}} = {sigma_i:.8g} \\text{{ N/mm²}}''')
+
+    S_i = sigmaK / sigma_i
+    st.write("**Koeficijent sigurnosti na izvijanje Sᵢ:**")
+    st.latex('''S_{i} = \\frac{\\sigma_{k}}{\\sigma_{i}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''S_{{i}} = \\frac{{{sigmaK:.8g}}}{{{sigma_i:.8g}}}''')
+    st.write("**Izračunata vrednost Sᵢ:**")
+    st.latex(f'''S_{{i}} = {S_i:.8g}''')
+
+    # Tačka 1.3
+    st.subheader("Tačka 1.3")
+    p = (F * P) / (Ln * d2 * np.pi * H1)
+    st.write("**Izračunavanje pritiska na bok navoja p:**")
+    st.latex('''p = \\frac{F \\times P}{L_n \\times d_2 \\times \\pi \\times H_1}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''p = \\frac{{{F:.8g} \\times {P:.8g}}}{{{Ln:.8g} \\times {d2:.8g} \\times \\pi \\times {H1:.8g}}}''')
+    st.write("**Izračunata vrednost p:**")
+    st.latex(f'''p = {p:.8g} \\text{{ N/mm²}}''')
+    if 10 <= p <= 20:
+        st.success("Rezultat zadovoljava uslov (**10 ≤ p ≤ 20**)")
+    else:
+        st.warning("Rezultat ne zadovoljava uslov (**10 ≤ p ≤ 20**)")
+
+    # Tačka 1.4
+    st.subheader("Tačka 1.4")
+    eta_np = np.tan(fi) / np.tan(fi + rho)
+    eta_nv = 0.9 * eta_np
+    st.write("**Izračunavanje mehaničkog stepena korisnosti ηₙₚ:**")
+    st.latex('''\\eta_{np} = \\frac{\\tan(\\varphi)}{\\tan(\\varphi + \\rho)}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\eta_{{np}} = \\frac{{\\tan({fi_deg:.8g}^\\circ)}}{{\\tan({fi_deg:.8g}^\\circ + {rho_deg:.8g}^\\circ)}}''')
+    st.write("**Izračunata vrednost ηₙₚ:**")
+    st.latex(f'''\\eta_{{np}} = {eta_np:.8g}''')
+
+    st.write("**Izračunavanje ukupnog stepena korisnosti ηₙᵥ:**")
+    st.latex('''\\eta_{nv} = 0.9 \\times \\eta_{np}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\eta_{{nv}} = 0.9 \\times {eta_np:.8g}''')
+    st.write("**Izračunata vrednost ηₙᵥ:**")
+    st.latex(f'''\\eta_{{nv}} = {eta_nv:.8g}''')
+
+    # Tačka 1.5
+    st.subheader("Tačka 1.5")
+    if fi > rho:
+        st.warning("**Navoj nije samokočiv**")
+    else:
+        st.success("**Navoj je samokočiv**")
+
+def tacka2():
+    # ===================================
+    # Tačka 2
+    # ===================================
+    st.markdown('<a id="tacka2"></a>', unsafe_allow_html=True)
+    st.header("Tačka 2")
+
+    # Unos vrednosti
+    z = st.number_input("Unesite broj z:", value=4.0, format="%.8g", key="z_t2")
+    Reh = st.number_input("Unesite vrednost RₑH (N/mm²):", value=300.0, format="%.8g", key="Reh_t2")
+
+    # Izračunavanja
+    st.write("**Izračunavanje reakcije po jednom vijku Fᵣ:**")
+    st.latex('''F_{r} = \\frac{F}{z}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''F_{{r}} = \\frac{{{F:.8g}}}{{{z:.8g}}}''')
+    Fr = F / z
+    st.write("**Izračunata vrednost Fᵣ:**")
+    st.latex(f'''F_{{r}} = {Fr:.8g} \\text{{ N}}''')
+
+    st.write("**Izračunavanje prednaprezanja Fₚ:**")
+    st.latex('''F_{p} = 3 \\times F_{r}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''F_{{p}} = 3 \\times {Fr:.8g}''')
+    Fp_initial = 3 * Fr
+    st.write("**Izračunata vrednost Fₚ:**")
+    st.latex(f'''F_{{p}} = {Fp_initial:.8g} \\text{{ N}}''')
+
+    st.write("**Izračunavanje potrebnog preseka Aₛ:**")
+    st.latex('''A_{s} = \\frac{F_{p}}{0.6 \\times R_{eH}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''A_{{s}} = \\frac{{{Fp_initial:.8g}}}{{0.6 \\times {Reh:.8g}}}''')
+    As_theoretical = Fp_initial / (0.6 * Reh)
+    st.write("**Izračunata vrednost Aₛ:**")
+    st.latex(f'''A_{{s}} = {As_theoretical:.8g} \\text{{ mm²}}''')
+    st.info("Uzmi prvi veći presek iz tabele 3.1")
+
+    # Unos As iz tabele
+    As = st.number_input("Unesite vrednost Aₛ (mm²):", value=58.0, format="%.8g", key="As_t2")
+    st.write("**Izračunavanje novog prednaprezanja Fₚ_novo:**")
+    st.latex('''F_{p \\_ novo} = 0.6 \\times A_{s} \\times R_{eH}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''F_{{p \\_ novo}} = 0.6 \\times {As:.8g} \\times {Reh:.8g}''')
+    Fp = 0.6 * As * Reh
+    st.write("**Izračunata vrednost Fₚ_novo:**")
+    st.latex(f'''F_{{p \\_ novo}} = {Fp:.8g} \\text{{ N}}''')
+
+    if Fp >= Fp_initial:
+        st.success("Provera uspešna, nastavi sa proračunom.")
+    else:
+        st.error("Provera nije uspešna, novo Fₚ nije veće ili jednako početnom Fₚ.")
+
+    # Unos novih parametara
+    st.subheader("Unesite nove parametre za dalji proračun iz tabele 3.1")
+    d2_new = st.number_input("Unesite srednji prečnik navoja d₂ (mm):", value=21.5, format="%.8g", key="d2_t2")
+    d3_new = st.number_input("Unesite prečnik d₃ (mm):", value=30.0, format="%.8g", key="d3_t2")
+    phi_deg = st.number_input("Unesite ugao navoja φ (stepeni):", value=7.125, format="%.8g", key="phi_deg_t2")
+    fi_new = np.radians(phi_deg)
+
+    # Tačka 2.1
+    st.subheader("Tačka 2.1")
+    tauT = st.number_input("Unesite dozvoljeni napon smicanja τₜ (N/mm²):", value=200.0, format="%.8g", key="tauT_t2")
+    SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon σₐₘ (N/mm²):", value=50.0, format="%.8g", key="SigmaAM_t2")
+
+    # Izračunavanje napona zatezanja σ
+    st.write("**Izračunavanje napona zatezanja σ:**")
+    st.latex('''\\sigma = \\frac{F_{p}}{A_{s}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\sigma = \\frac{{{Fp:.8g}}}{{{As:.8g}}}''')
+    sigma = Fp / As
+    st.write("**Izračunata vrednost σ:**")
+    st.latex(f'''\\sigma = {sigma:.8g} \\text{{ N/mm²}}''')
+    S_sigma = Reh / sigma
+    st.write("**Izračunat koeficijent sigurnosti Sσ:**")
+    st.latex(f'''S_σ = \\frac{{R_{{eH}}}}{{\\sigma}} = \\frac{{300}}{{{sigma:.8g}}} = {S_sigma:.8g}''')
+
+    # Izračunavanje Wp
+    st.write("**Izračunavanje otpornog momenta Wₚ:**")
+    st.latex('''W_{p} = 0.2 \\times \\left( \\frac{d_{2} + d_{3}}{2} \\right)^3''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''W_{{p}} = 0.2 \\times \\left( \\frac{{{d2_new:.8g} + {d3_new:.8g}}}{{2}} \\right)^3''')
+    Wp = 0.2 * ((d2_new + d3_new) / 2) ** 3
+    st.write("**Izračunata vrednost Wₚ:**")
+    st.latex(f'''W_{{p}} = {Wp:.8g} \\text{{ mm³}}''')
+
+    # Izračunavanje momenta zavrtanja Tₜ
+    st.write("**Izračunavanje momenta zavrtanja Tₜ:**")
+    st.latex('''T_{t} = \\frac{F_{p} \\times d_{2}}{2} \\times \\tan(\\varphi + \\rho)''')
+    f_val = st.number_input("Unesite faktor trenja μ:", value=0.15, format="%.8g", key="f_val_t2")
+    rho_val = np.arctan(f_val / np.cos(np.radians(30)))
+    rho_val_deg = np.degrees(rho_val)
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''T_{{t}} = \\frac{{{Fp:.8g} \\times {d2_new:.8g}}}{{2}} \\times \\tan({phi_deg:.8g}^\\circ + {rho_val_deg:.8g}^\\circ)''')
+    Tt = (Fp * d2_new) / 2 * np.tan(fi_new + rho_val)
+    st.write("**Izračunata vrednost Tₜ :**")
+    st.latex(f'''T_{{t}} = {Tt:.8g} \\text{{ Nmm}}''')
+
+    # Izračunavanje napona smicanja τ
+    st.write("**Izračunavanje napona smicanja τ:**")
+    st.latex('''\\tau = \\frac{T_{t}}{W_{p}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\tau = \\frac{{{Tt:.8g}}}{{{Wp:.8g}}}''')
+    tau = Tt / Wp
+    st.write("**Izračunata vrednost τ:**")
+    st.latex(f'''\\tau = {tau:.8g} \\text{{ N/mm²}}''')
+    S_tau = tauT / tau
+    st.write("**Izračunat koeficijent sigurnosti Sτ:**")
+    st.latex(f'''S_τ = \\frac{{\\tau_{{t}}}}{{\\tau}} = \\frac{{200}}{{{tau:.8g}}} = {S_tau:.8g}''')
+
+    # Ukupni koeficijent sigurnosti
+    st.write("**Ukupni koeficijent sigurnosti S:**")
+    st.latex('''S = \\frac{S_{\\sigma} \\times S_{\\tau}}{\\sqrt{S_{\\sigma}^2 + S_{\\tau}^2}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''S = \\frac{{{S_sigma:.8g} \\times {S_tau:.8g}}}{{\\sqrt{{{S_sigma:.8g}^2 + {S_tau:.8g}^2}}}}''')
+    S_total = (S_sigma * S_tau) / np.sqrt(S_sigma ** 2 + S_tau ** 2)
+    st.write("**Izračunata vrednost S:**")
+    st.latex(f'''S = {S_total:.8g}''')
+    st.info("Veće od **S_min = 1.25 – 2.5** (Dodati komentar)")
+
+    # Tačka 2.2
+    st.subheader("Tačka 2.2")
+    st.write("**Izračunavanje sile Fz:**")
+    st.latex('''F_{z} = F_{p} + \\frac{1}{6} \\times F_{r}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''F_{{z}} = {Fp:.8g} + \\frac{{1}}{{6}} \\times {Fr:.8g}''')
+    Fz = Fp + (1 / 6) * Fr
+    st.write("**Izračunata vrednost Fz:**")
+    st.latex(f'''F_{{z}} = {Fz:.8g} \\text{{ N}}''')
+
+    st.write("**Izračunavanje napona zatezanja σ:**")
+    st.latex('''\\sigma = \\frac{F_{z}}{A_{s}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\sigma = \\frac{{{Fz:.8g}}}{{{As:.8g}}}''')
+    sigma = Fz / As
+    st.write("**Izračunata vrednost σ:**")
+    st.latex(f'''\\sigma = {sigma:.8g} \\text{{ N/mm²}}''')
+
+    S_sigma = Reh / sigma
+    st.write("**Izračunat koeficijent sigurnosti Sσ:**")
+    st.latex(f'''S_σ = \\frac{{R_{{eH}}}}{{\\sigma}} = \\frac{{300}}{{{sigma:.8g}}} = {S_sigma:.8g}''')
+    st.info("Veće od **S_min = 1.25 – 2.5** (dodati komentar)")
+
+    # Tačka 2.3
+    st.subheader("Tačka 2.3")
+    st.write("**Izračunavanje amplitude sile Fₐ:**")
+    st.latex('''F_{a} = \\frac{F_{z} - F_{p}}{2}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''F_{{a}} = \\frac{{{Fz:.8g} - {Fp:.8g}}}{{2}}''')
+    Fa = (Fz - Fp) / 2
+    st.write("**Izračunata vrednost Fₐ:**")
+    st.latex(f'''F_{{a}} = {Fa:.8g} \\text{{ N}}''')
+
+    st.write("**Izračunavanje amplitudnog napona σₐ:**")
+    st.latex('''\\sigma_{a} = \\frac{F_{a}}{A_{s}}''')
+    st.write("**Sa unetim vrednostima:**")
+    st.latex(f'''\\sigma_{{a}} = \\frac{{{Fa:.8g}}}{{{As:.8g}}}''')
+    sigma_a = Fa / As
+    st.write("**Izračunata vrednost σₐ:**")
+    st.latex(f'''\\sigma_{{a}} = {sigma_a:.8g} \\text{{ N/mm²}}''')
+
+    S_a = SigmaAM / sigma_a
+    st.write(f"**Sₐ = {S_a:.8g}**")
+    st.info("Veće od **S_min = 1.25 – 2.5** (Dodati komentar)")
+def tacka4 ():
+    st.markdown('<a id="tacka4"></a>', unsafe_allow_html=True)
+    st.title("Tačka 4")
+def tacka5 ():
+    st.markdown('<a id="tacka5"></a>', unsafe_allow_html=True)
+    st.title("Tačka 5")
+
+# Poziv funkcija
+nulta_tacka()
+tacka1()
+tacka2()
+tacka4()
+tacka5()
