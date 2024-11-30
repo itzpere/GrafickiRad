@@ -594,9 +594,8 @@ def tacka4():
     )
     st.info("Sada treba izabrati motor iz tabele i izvuci parametre Pem i nem. npr za pocetne podatke (zupcasti) usvaja se 2.ZK 112 M-4")
     novo_nem = st.number_input("Unesite novu vrednost nₑₘ (min⁻¹):", value=1450.0, format="%.8g", key="nem_t4_new")
-    select = st.selectbox("Izaberite račun:", ("a) Z₅", "b) iₖ₁₂"), key="select_t4")
 
-    if select == "a) Z₅":
+    if kaisni_par == "Zupčasti":
         i12 = z2 / z1
         z5_display = (P * novo_nem * z4) / (60 * Vnv * ik12 * i12)
         st.write("**Izračunavanje Z₅:**")
@@ -606,7 +605,7 @@ def tacka4():
             \\frac{{{P:.8g} \\times {nem:.8g} \\times {z4:.8g}}}{{60 \\times {Vnv:.8g} \\times {ik12:.8g} \\times {i12:.8g}}} = {z5_display:.8g}
             '''
         )
-    elif select == "b) iₖ₁₂":
+    else:
         i12 = z2 / z1
         i56 = z6 / z5
         ik12_display = (P * novo_nem) / (60 * Vnv * i12 * i56)
