@@ -491,9 +491,132 @@ def tacka2():
     S_a = SigmaAM / sigma_a
     st.write(f"**Sₐ = {S_a:.8g}**")
     st.info("Veće od **S_min = 1.25 – 2.5** (Dodati komentar)")
-def tacka4 ():
+def tacka4():
+    # ===================================
+    # Tačka 4
+    # ===================================
     st.markdown('<a id="tacka4"></a>', unsafe_allow_html=True)
-    st.title("Tačka 4")
+    st.header("Tačka 4")
+
+    # Odabir pogonskog elektromotora
+    st.subheader("Odabir pogonskog elektromotora")
+
+    # Unos vrednosti
+    Vnv = st.number_input("Unesite brzinu pomeraja navrtke Vₙᵥ (mm/s):", value=30.0, format="%.8g", key="Vnv_t4")
+    P = st.number_input("Unesite korak navoja P (mm):", value=5.0, format="%.8g", key="P_t4")
+    Trm = st.number_input("Unesite vrednost Tᵣₘ (Nm):", value=80.0, format="%.8g", key="Trm_t4")
+    nem = st.number_input("Unesite vrednost nₑₘ (min⁻¹):", value=1450.0, format="%.8g", key="nem_t4")
+    z1 = st.number_input("Unesite vrednost z₁ = z₃:", value=19, format="%.8g", key="z1_t4")
+    z3 = z1
+    z2 = st.number_input("Unesite vrednost z₂:", value=38, format="%.8g", key="z2_t4")
+    z4 = st.number_input("Unesite vrednost z₄:", value=23, format="%.8g", key="z4_t4")
+    z5 = st.number_input("Unesite vrednost z₅:", value=38, format="%.8g", key="z5_t4")
+    z6 = st.number_input("Unesite vrednost z₆:", value=20, format="%.8g", key="z6_t4")
+    z7 = st.number_input("Unesite vrednost z₇:", value=39, format="%.8g", key="z7_t4")
+    eta_z = st.number_input("Unesite vrednost η_z:", value=0.99, format="%.8g", key="eta_z_t4")
+
+    # Odabir kaišnog para
+    st.subheader("Odabir kaišnog para")
+    kaisni_par = st.selectbox("Izaberite kaišni par:", ("Trapezni - normalni/uski", "Zupčasti", "Višeprofilni"), key="kaisni_par_t4")
+
+    if kaisni_par == "Trapezni - normalni/uski":
+        Uk12 = st.number_input("Unesite vrednost Uₖ₁₂:", value=1.0, format="%.8g", key="Uk12_t4")
+        xi_p = st.number_input("Unesite vrednost ξₚ:", value=0.985, format="%.8g", key="xi_p_t4")
+        eta_k = st.number_input("Unesite vrednost ηₖ:", value=0.97, format="%.8g", key="eta_k_t4")
+
+        # Izračunavanje nᵣₘ
+        nrm = nem / ((Uk12 / xi_p) * (z2 / z1) * (z3 / z2) * (z7 / z6))
+        st.write("**Izračunavanje nᵣₘ:**")
+        st.latex(
+            f'''
+            n_{{rm}} = \\frac{{n_{{em}}}}{{\\left(\\dfrac{{U_{{k12}}}}{{\\xi_{{p}}}}\\right) \\times \\dfrac{{z_{{2}}}}{{z_{{1}}}} \\times \\dfrac{{z_{{3}}}}{{z_{{2}}}} \\times \\dfrac{{z_{{7}}}}{{z_{{6}}}}}} = 
+            \\frac{{{nem:.8g}}}{{\\left(\\dfrac{{{Uk12:.8g}}}{{{xi_p:.8g}}}\\right) \\times \\dfrac{{{z2:.8g}}}{{{z1:.8g}}} \\times \\dfrac{{{z3:.8g}}}{{{z2:.8g}}} \\times \\dfrac{{{z7:.8g}}}{{{z6:.8g}}}}} = {nrm:.8g} \\text{{ min}}^{{-1}}
+            '''
+        )
+
+    elif kaisni_par == "Zupčasti":
+        ik12 = st.number_input("Unesite vrednost iₖ₁₂:", value=2.1, format="%.8g", key="ik12_t4")
+        eta_k = st.number_input("Unesite vrednost ηₖ:", value=0.985, format="%.8g", key="eta_k_t4")
+
+        # Izračunavanje nᵣₘ
+        nrm = nem / (ik12 * (z2 / z1) * (z3 / z2) * (z7 / z6))
+        st.write("**Izračunavanje nᵣₘ:**")
+        st.latex(
+            f'''
+            n_{{rm}} = \\frac{{n_{{em}}}}{{i_{{k12}} \\times \\dfrac{{z_{{2}}}}{{z_{{1}}}} \\times \\dfrac{{z_{{3}}}}{{z_{{2}}}} \\times \\dfrac{{z_{{7}}}}{{z_{{6}}}}}} = 
+            \\frac{{{nem:.8g}}}{{{ik12:.8g} \\times \\dfrac{{{z2:.8g}}}{{{z1:.8g}}} \\times \\dfrac{{{z3:.8g}}}{{{z2:.8g}}} \\times \\dfrac{{{z7:.8g}}}{{{z6:.8g}}}}} = {nrm:.8g} \\text{{ min}}^{{-1}}
+            '''
+        )
+
+    elif kaisni_par == "Višeprofilni":
+        Uk12 = st.number_input("Unesite vrednost Uₖ₁₂:", value=1.0, format="%.8g", key="Uk12_t4")
+        xi_p = st.number_input("Unesite vrednost ξₚ:", value=0.99, format="%.8g", key="xi_p_t4")
+        eta_k = st.number_input("Unesite vrednost ηₖ:", value=0.98, format="%.8g", key="eta_k_t4")
+
+        # Izračunavanje nᵣₘ
+        nrm = nem / ((Uk12 / xi_p) * (z2 / z1) * (z3 / z2) * (z7 / z6))
+        st.write("**Izračunavanje nᵣₘ:**")
+        st.latex(
+            f'''
+            n_{{rm}} = \\frac{{n_{{em}}}}{{\\left(\\dfrac{{U_{{k12}}}}{{\\xi_{{p}}}}\\right) \\times \\dfrac{{z_{{2}}}}{{z_{{1}}}} \\times \\dfrac{{z_{{3}}}}{{z_{{2}}}} \\times \\dfrac{{z_{{7}}}}{{z_{{6}}}}}} = 
+            \\frac{{{nem:.8g}}}{{\\left(\\dfrac{{{Uk12:.8g}}}{{{xi_p:.8g}}}\\right) \\times \\dfrac{{{z2:.8g}}}{{{z1:.8g}}} \\times \\dfrac{{{z3:.8g}}}{{{z2:.8g}}} \\times \\dfrac{{{z7:.8g}}}{{{z6:.8g}}}}} = {nrm:.8g} \\text{{ min}}^{{-1}}
+            '''
+        )
+
+    # Izračunavanje Pₙᵥ
+    Fnv = F / 1000  # Pretvaranje F u kN
+    Vnv_m_s = Vnv / 1000  # Pretvaranje Vₙᵥ u m/s
+    Pnv = Fnv * Vnv_m_s
+    st.write("**Izračunavanje Pₙᵥ:**")
+    st.latex(
+        f'''
+        P_{{nv}} = F_{{nv}} \\times V_{{nv}} = {Fnv:.8g} \\times {Vnv_m_s:.8g} = {Pnv:.8g} \\text{{ kW}}
+        '''
+    )
+
+    # Izračunavanje Pᵣₘ
+    Prm = (Trm * nrm) / 9550
+    st.write("**Izračunavanje Pᵣₘ:**")
+    st.latex(
+        f'''
+        P_{{rm}} = \\frac{{T_{{rm}} \\times n_{{rm}}}}{{9550}} = \\frac{{{Trm:.8g} \\times {nrm:.8g}}}{{9550}} = {Prm:.8g} \\text{{ kW}}
+        '''
+    )
+
+    # Izračunavanje Pₑₘ
+    Pem = (Pnv) / (eta_k * eta_z ** 2) + (Prm) / (eta_k * eta_z ** 3)
+    st.write("**Izračunavanje Pₑₘ:**")
+    st.latex(
+        f'''
+        P_{{em}} = \\frac{{P_{{nv}}}}{{\\eta_{{k}} \\times \\eta_{{z}}^2}} + \\frac{{P_{{rm}}}}{{\\eta_{{k}} \\times \\eta_{{z}}^3}} = 
+        \\frac{{{Pnv:.8g}}}{{{eta_k:.8g} \\times {eta_z:.8g}^2}} + \\frac{{{Prm:.8g}}}{{{eta_k:.8g} \\times {eta_z:.8g}^3}} = {Pem:.8g} \\text{{ kW}}
+        '''
+    )
+    st.info("Sada treba izabrati motor iz tabele i izvuci parametre Pem i nem. npr za pocetne podatke (zupcasti) usvaja se 2.ZK 112 M-4")
+    novo_nem = st.number_input("Unesite novu vrednost nₑₘ (min⁻¹):", value=1450.0, format="%.8g", key="nem_t4_new")
+    select = st.selectbox("Izaberite račun:", ("a) Z₅", "b) iₖ₁₂"), key="select_t4")
+
+    if select == "a) Z₅":
+        i12 = z2 / z1
+        z5_display = (P * novo_nem * z4) / (60 * Vnv * ik12 * i12)
+        st.write("**Izračunavanje Z₅:**")
+        st.latex(
+            f'''
+            Z_{{5}} = \\frac{{P \\times n_{{em}} \\times z_{{4}}}}{{60 \\times V_{{nv}} \\times i_{{k12}} \\times i_{{12}}}} = 
+            \\frac{{{P:.8g} \\times {nem:.8g} \\times {z4:.8g}}}{{60 \\times {Vnv:.8g} \\times {ik12:.8g} \\times {i12:.8g}}} = {z5_display:.8g}
+            '''
+        )
+    elif select == "b) iₖ₁₂":
+        i12 = z2 / z1
+        i56 = z6 / z5
+        ik12_display = (P * novo_nem) / (60 * Vnv * i12 * i56)
+        st.write("**Izračunavanje iₖ₁₂:**")
+        st.latex(
+            f'''
+            i_{{k12}} = \\frac{{P \\times n_{{em}}}}{{60 \\times V_{{nv}} \\times i_{{12}} \\times i_{{56}}}} = 
+            \\frac{{{P:.8g} \\times {nem:.8g}}}{{60 \\times {Vnv:.8g} \\times {i12:.8g} \\times {i56:.8g}}} = {ik12_display:.8g}
+            '''
+        )
 def tacka5 ():
     st.markdown('<a id="tacka5"></a>', unsafe_allow_html=True)
     st.title("Tačka 5")
