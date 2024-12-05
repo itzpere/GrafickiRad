@@ -192,8 +192,8 @@ def tacka1():
     st.header("Tačka 1")
 
     # Unos potrebnih vrednosti
-    #sigmaD0 = st.number_input("Unesite dozvoljeni napon zatezanja σ_D0 (N/mm²):", value=350.0, format="%.8g", key="sigmaD0_t1")
-    #tauD0 = st.number_input("Unesite dozvoljeni napon smicanja τ_D0 (N/mm²):", value=215.0, format="%.8g", key="tauD0_t1")
+    sigmaD0 = st.number_input("Unesite dozvoljeni napon zatezanja σ_D0 (N/mm²):", value=350.0, format="%.8g", key="sigmaD0_t1")
+    tauD0 = st.number_input("Unesite dozvoljeni napon smicanja τ_D0 (N/mm²):", value=215.0, format="%.8g", key="tauD0_t1")
     A3 = st.number_input("Unesite površinu A₃ (mm²):", value=150.0, format="%.8g", key="A3_t1")
     d3 = st.number_input("Unesite prečnik d₃ (mm):", value=30.0, format="%.8g", key="d3_t1")
     d2 = st.number_input("Unesite srednji prečnik navoja d₂ (mm):", value=21.5, format="%.8g", key="d2_t1")
