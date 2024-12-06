@@ -41,9 +41,9 @@ def nulta_tacka():
         tauD0 = 205
 
     st.write("**Dozvoljeni napon zatezanja:**")
-    st.latex(f'''\\sigma_{{D0}} = {sigmaD0} \\, \\text{{N/mm}}^2''')
+    st.latex(f'''\\sigma_{{(D0)}} = {sigmaD0} \\, \\text{{N/mm}}^2''')
     st.write("**Dozvoljeni napon smicanja:**")
-    st.latex(f'''\\tau_{{D0}} = {tauD0} \\, \\text{{N/mm}}^2''')
+    st.latex(f'''\\tau_{{(D0)}} = {tauD0} \\, \\text{{N/mm}}^2''')
 
     # Izračunavanje A₃
     st.write("**Formula za površinu A₃:**")
@@ -192,8 +192,8 @@ def tacka1():
     st.header("Tačka 1")
 
     # Unos potrebnih vrednosti
-    sigmaD0 = st.number_input("Unesite dozvoljeni napon zatezanja σ_D0 (N/mm²):", value=350.0, format="%.8g", key="sigmaD0_t1")
-    tauD0 = st.number_input("Unesite dozvoljeni napon smicanja τ_D0 (N/mm²):", value=215.0, format="%.8g", key="tauD0_t1")
+    sigmaD0 = st.number_input("Unesite dozvoljeni napon zatezanja σ(D0) (N/mm²):", value=350.0, format="%.8g", key="sigmaD0_t1")
+    tauD0 = st.number_input("Unesite dozvoljeni napon smicanja τ(D0) (N/mm²):", value=215.0, format="%.8g", key="tauD0_t1")
     A3 = st.number_input("Unesite površinu A₃ (mm²):", value=150.0, format="%.8g", key="A3_t1")
     d3 = st.number_input("Unesite prečnik d₃ (mm):", value=30.0, format="%.8g", key="d3_t1")
     d2 = st.number_input("Unesite srednji prečnik navoja d₂ (mm):", value=21.5, format="%.8g", key="d2_t1")
@@ -225,7 +225,7 @@ def tacka1():
     st.write("**Izračunata vrednost napona σ:**")
     st.latex(f'''\\sigma = {sigma:.8g} \\text{{ N/mm²}}''')
     st.write("**Izracunavanje Sσ**")
-    st.latex(f'''S_σ = \\frac{{\\sigma_{{D0}}}}{{\\sigma}} = \\frac{{350}}{{{sigma:.8g}}} = {S_sigma:.8g}''') 
+    st.latex(f'''S_σ = \\frac{{\\sigma_{{(D0)}}}}{{\\sigma}} = \\frac{{350}}{{{sigma:.8g}}} = {S_sigma:.8g}''') 
 
     st.write("**Izračunavanje napona smicanja τ:**")
     st.latex('''\\tau = \\frac{T_{np}}{0.2 \\times d_3^3}''')
@@ -234,7 +234,7 @@ def tacka1():
     st.write("**Izračunata vrednost napona τ:**")
     st.latex(f'''\\tau = {tau:.8g} \\text{{ N/mm²}}''')
     st.write("**Izračunavanje Sτ**")
-    st.latex(f'''S_τ = \\frac{{\\tau_{{D0}}}}{{\\tau}} = \\frac{{215}}{{{tau:.8g}}} = {S_tau:.8g}''')
+    st.latex(f'''S_τ = \\frac{{\\tau_{{(D0)}}}}{{\\tau}} = \\frac{{215}}{{{tau:.8g}}} = {S_tau:.8g}''')
 
     st.write("**Ukupni koeficijent sigurnosti S:**")
     st.latex('''S = \\frac{S_\\sigma \\times S_\\tau}{\\sqrt{S_\\sigma^2 + S_\\tau^2}}''')
@@ -242,10 +242,11 @@ def tacka1():
     st.latex(f'''S = \\frac{{{S_sigma:.8g} \\times {S_tau:.8g}}}{{\\sqrt{{{S_sigma:.8g}^2 + {S_tau:.8g}^2}}}}''')
     st.write("**Izračunata vrednost S:**")
     st.latex(f'''S = {S_total:.8g}''')
-    st.info("Treba da bude veće od **S_min = 1.5 – 2**")
+    st.info("Treba da bude veće od **S_min = 1.5 – 2 (dodati komentar)**")
 
     # Tačka 1.2
     st.subheader("Tačka 1.2")
+    st.info("Vrednost za Bₗ se vadi iz tabele prilozene na sajtu nazvane 'DVOREDI-LEZAJEVI.pdf'")
     Bl = st.number_input("Unesite vrednost Bₗ (mm):", value=19.0, format="%.8g", key="Bl_t1")
     i = d3 / 4
     Lk = (Ln / 2) + h + 10 + (Bl / 2)
@@ -254,7 +255,8 @@ def tacka1():
     st.write("**Sa unetim vrednostima:**")
     st.latex(f'''L_k = \\frac{{{Ln:.8g}}}{{2}} + {h:.8g} + 10 + \\frac{{{Bl:.8g}}}{{2}}''')
     st.write("**Izračunata vrednost Lk:**")
-    st.latex(f'''L_k = {Lk:.8g}''')
+    st.latex(f'''L_k = {Lk:.8g} \\text{{ mm}}''')
+    st.latex("i = \\frac{d_3}{4} = \\frac{30}{4} = 7.5")
     lamda = Lk / i
     st.write("**Izračunavanje vitkosti λ:**")
     st.latex('''\\lambda = \\frac{L_k}{i}''')
@@ -308,6 +310,7 @@ def tacka1():
         st.success("Rezultat zadovoljava uslov (**10 ≤ p ≤ 20**)")
     else:
         st.warning("Rezultat ne zadovoljava uslov (**10 ≤ p ≤ 20**)")
+    st.info("Ovo treba staviti samo kao komentar ovo je direktna provera usvojene vrednosti za pdoz iz tacke 0.2")
 
     # Tačka 1.4
     st.subheader("Tačka 1.4")
@@ -343,7 +346,7 @@ def tacka2():
 
     # Unos vrednosti
     z = st.number_input("Unesite broj z:", value=4.0, format="%.8g", key="z_t2")
-    Reh = st.number_input("Unesite vrednost RₑH (N/mm²):", value=300.0, format="%.8g", key="Reh_t2")
+    Reh = st.number_input("Unesite vrednost Rₑₕ (N/mm²):", value=300.0, format="%.8g", key="Reh_t2")
 
     # Izračunavanja
     st.write("**Izračunavanje reakcije po jednom vijku Fᵣ:**")
@@ -373,13 +376,13 @@ def tacka2():
 
     # Unos As iz tabele
     As = st.number_input("Unesite vrednost Aₛ (mm²):", value=58.0, format="%.8g", key="As_t2")
-    st.write("**Izračunavanje novog prednaprezanja Fₚ_novo:**")
-    st.latex('''F_{p \\_ novo} = 0.6 \\times A_{s} \\times R_{eH}''')
+    st.write("**Izračunavanje novog prednaprezanja Fₚ:**")
+    st.latex('''F_p = 0.6 \\times A_{s} \\times R_{eH}''')
     st.write("**Sa unetim vrednostima:**")
-    st.latex(f'''F_{{p \\_ novo}} = 0.6 \\times {As:.8g} \\times {Reh:.8g}''')
+    st.latex(f'''F_p = 0.6 \\times {As:.8g} \\times {Reh:.8g}''')
     Fp = 0.6 * As * Reh
     st.write("**Izračunata vrednost Fₚ_novo:**")
-    st.latex(f'''F_{{p \\_ novo}} = {Fp:.8g} \\text{{ N}}''')
+    st.latex(f'''F_p = {Fp:.8g} \\text{{ N}}''')
 
     if Fp >= Fp_initial:
         st.success("Provera uspešna, nastavi sa proračunom.")
@@ -422,7 +425,7 @@ def tacka2():
     # Izračunavanje momenta zavrtanja Tₜ
     st.write("**Izračunavanje momenta zavrtanja Tₜ:**")
     st.latex('''T_{t} = \\frac{F_{p} \\times d_{2}}{2} \\times \\tan(\\varphi + \\rho)''')
-    f_val = st.number_input("Unesite faktor trenja μ:", value=0.15, format="%.8g", key="f_val_t2")
+    f_val = st.number_input("Faktor trenja μ:", value=0.15, format="%.8g", key="f_val_t2")
     rho_val = np.arctan(f_val / np.cos(np.radians(30)))
     rho_val_deg = np.degrees(rho_val)
     st.write("**Sa unetim vrednostima:**")
@@ -495,7 +498,8 @@ def tacka2():
     st.latex(f'''\\sigma_{{a}} = {sigma_a:.8g} \\text{{ N/mm²}}''')
 
     S_a = SigmaAM / sigma_a
-    st.write(f"**Sₐ = {S_a:.8g}**")
+    st.write("**Izračunat koeficijent sigurnosti Sₐ:**")
+    st.latex(f'''S_a = \\frac{{\\sigma_{{AM}}}}{{\\sigma_{{a}}}} = \\frac{{50}}{{{sigma_a:.8g}}} = {S_a:.8g}''')
     st.info("Veće od **S_min = 1.25 – 2.5** (Dodati komentar)")
 def tacka4():
     # ===================================
