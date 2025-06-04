@@ -359,7 +359,7 @@ def tacka2():
 
     st.write("**Izračunavanje prednaprezanja Fₚ:**")
     y = st.slider("Faktor prednaprezanja y (2-4):", min_value=2.0, max_value=4.0, value=3.0, step=0.1)
-    st.info("Ako ima potrebe pomeraj slajder dok ne dobiješ vrednost u granicama za odgovrajući stepen sigurnosti u granicama")
+    st.info("Ako ima potrebe pomeraj slajder dok ne dobiješ vrednost za odgovrajući stepen sigurnosti u granicama")
     st.latex('''F_{p} = y \\times F_{r}''')
     st.write("**Sa unetim vrednostima:**")
     st.latex(f'''F_{{p}} = {y} \\times {Fr:.8g}''')
@@ -400,6 +400,7 @@ def tacka2():
 
     # Tačka 2.1
     st.subheader("Tačka 2.1")
+    st.info("Sledece parametre uneti iz tabele 3.5 i 3.6")
     tauT = st.number_input("Unesite dozvoljeni napon smicanja τₜ (N/mm²):", value=200.0, format="%.8g", key="tauT_t2")
     SigmaAM = st.number_input("Unesite dozvoljeni amplitudni napon σₐₘ (N/mm²):", value=50.0, format="%.8g", key="SigmaAM_t2")
 
