@@ -348,7 +348,7 @@ def tacka2():
     z = st.number_input("Unesite broj z:", value=4.0, format="%.8g", key="z_t2")
     Reh = st.number_input("Unesite vrednost Rₑₕ (N/mm²):", value=300.0, format="%.8g", key="Reh_t2")
 
-    # Izračunavanja
+# Izračunavanja
     st.write("**Izračunavanje reakcije po jednom vijku Fᵣ:**")
     st.latex('''F_{r} = \\frac{F}{z}''')
     st.write("**Sa unetim vrednostima:**")
@@ -358,10 +358,12 @@ def tacka2():
     st.latex(f'''F_{{r}} = {Fr:.8g} \\text{{ N}}''')
 
     st.write("**Izračunavanje prednaprezanja Fₚ:**")
-    st.latex('''F_{p} = 3 \\times F_{r}''')
+    y = st.slider("Faktor prednaprezanja y (2-4):", min_value=2.0, max_value=4.0, value=3.0, step=0.1)
+    st.info("Ako ima potrebe pomeraj slajder dok ne dobiješ vrednost u granicama za odgovrajući stepen sigurnosti u granicama")
+    st.latex('''F_{p} = y \\times F_{r}''')
     st.write("**Sa unetim vrednostima:**")
-    st.latex(f'''F_{{p}} = 3 \\times {Fr:.8g}''')
-    Fp_initial = 3 * Fr
+    st.latex(f'''F_{{p}} = {y} \\times {Fr:.8g}''')
+    Fp_initial = y * Fr
     st.write("**Izračunata vrednost Fₚ:**")
     st.latex(f'''F_{{p}} = {Fp_initial:.8g} \\text{{ N}}''')
 
