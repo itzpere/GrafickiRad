@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 st.title("Proračun navojnog vretena")
-st.info("Ovaj program služi za izračunavanje prvih 3 tačaka grafičkog rada. I dalje treba pratiti uputstvo radi pravilnog ispisivanja na papiru.")
+st.info("Ovaj program služi za izračunavanje tačaka grafičkog rada. I dalje treba pratiti uputstvo radi pravilnog ispisivanja na papiru.")
 
 st.markdown("""
 ### Navigacija
@@ -530,7 +530,7 @@ def tacka4():
     z5 = st.number_input("Unesite vrednost z₅:", value=38, format="%.8g", key="z5_t4")
     z6 = st.number_input("Unesite vrednost z₆:", value=20, format="%.8g", key="z6_t4")
     z7 = st.number_input("Unesite vrednost z₇:", value=39, format="%.8g", key="z7_t4")
-    st.info("η_z predstavlja stepen iskorišćenja zupčastog para (efikasnost zupčanika), vrednost je obično između 0.97 i 0.99")
+    st.info("η_z vrednost obično ne treba dirati")
     eta_z = st.number_input("Unesite vrednost η_z:", value=0.99, format="%.8g", key="eta_z_t4")
 
     # Odabir kaišnog para
@@ -634,9 +634,57 @@ def tacka4():
             \\frac{{{P:.8g} \\times {nem:.8g}}}{{60 \\times {Vnv:.8g} \\times {i12:.8g} \\times {i56:.8g}}} = {ik12_display:.8g}
             '''
         )
-def tacka5 ():
+def tacka5():
+    # ===================================
+    # Tačka 5
+    # ===================================
     st.markdown('<a id="tacka5"></a>', unsafe_allow_html=True)
     st.title("Tačka 5")
+    
+    # Dropdown za izbor vrste kaiša
+    kais_type = st.selectbox(
+        "Izaberite vrstu kaiša za proračun:",
+        ["Trapezni kaiševi", "Zupčasti kaiševi", "Višeprofilni kaiševi"],
+        key="kais_type_t5"
+    )
+    
+    st.info("Parametri n_em i P_em iz tačke 4 se prepisuju kao n_k1 i P_k1 u ovoj tački. To treba napomenuti na papiru.")
+    
+    # Zajednički parametri
+    P_k1 = st.number_input("Unesite snagu P_k1 (= P_em iz tačke 4) (kW):", value=4.0, format="%.8g", key="P_k1_t5")
+    n_k1 = st.number_input("Unesite broj obrtaja n_k1 (= n_em iz tačke 4) (min⁻¹):", value=1450.0, format="%.8g", key="n_k1_t5")
+    
+    if kais_type == "Trapezni kaiševi":
+        st.subheader("Nije uradjeno")
+     
+    elif kais_type == "Zupčasti kaiševi":
+        st.subheader("5.1. Proračun kaišnog prenosnika")
+        
+        # CA - faktor radnih uslova
+        st.info("Iz tabele 4.2 (str. 133) očitava se C_A – faktor radnih uslova (vrednosti u zagradi uz pomoc uslova rada koji su dati na odstampanom papiru.")
+        CA = st.number_input("Unesite faktor radnih uslova C_A:", value=1.4, format="%.8g", key="CA_t5")
+        
+        # Izračunavanje CA*P_k1
+        CA_P = CA * P_k1
+        st.write("**Izračunavanje C_A × P_k1:**")
+        st.latex(f'''C_A \\times P_{{k1}} = {CA:.8g} \\times {P_k1:.8g} = {CA_P:.8g} \\text{{ kW}}''')
+        
+        # Izbor oznake zupčastog kaiša
+        st.info("Za vrednost proizvoda C_A × P_k1 = {:.8g} kW i broj obrtaja n_k1 = {:.8g} min⁻¹ iz dijagrama na sl. 4.32 (str. 160) usvaja se oznaka zupčastog kaiša.".format(CA_P, n_k1))
+
+        # Karakteristične dimenzije kaiša
+        st.info("Iz tabele 4.33 (str.162) prepisuju se karakteristične dimenzije za usvojeni kaiš {} koje se koriste u daljem proračunu.")
+        
+        # Osnovne dimenzije usvojenog kaiša
+        st.subheader("Dodatni parametri iz tabele za usvojeni kaiš")
+        Pmax = st.number_input("Unesite maksimalnu snagu Pmax (kW):", value=7.5, format="%.8g", key="Pmax_t5")
+        Nmax = st.number_input("Unesite maksimalnu silu zatezanja Nmax (N):", value=1500.0, format="%.8g", key="Nmax_t5")
+        vmax = st.number_input("Unesite maksimalnu brzinu vmax (m/s):", value=50.0, format="%.8g", key="vmax_t5")
+        Fn = st.number_input("Unesite jediničnu silu Fn (N/cm):", value=125.0, format="%.8g", key="Fn_t5")
+        n1 = st.number_input("Unesite broj zubaca n1:", value=10, format="%.8g", key="n1_t5")              
+    elif kais_type == "Višeprofilni kaiševi":
+        st.subheader("Nije uradjeno")
+
 
 # Poziv funkcija
 nulta_tacka()
