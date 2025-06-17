@@ -639,7 +639,7 @@ def tacka5():
     # Tačka 5
     # ===================================
     st.markdown('<a id="tacka5"></a>', unsafe_allow_html=True)
-    st.title("Tačka 5")
+    st.title("Tačka 5 ")
     
     # Dropdown za izbor vrste kaiša
     kais_type = st.selectbox(
