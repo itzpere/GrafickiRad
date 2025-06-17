@@ -515,8 +515,12 @@ def tacka4():
     st.subheader("Odabir pogonskog elektromotora")
 
     # Unos vrednosti
-    Vnv = st.number_input("Unesite brzinu pomeraja navrtke Vₙᵥ (mm/s):", value=30.0, format="%.8g", key="Vnv_t4")
+    st.info("Vrednost koraka P je preuzeta iz prve tačke")
     P = st.number_input("Unesite korak navoja P (mm):", value=5.0, format="%.8g", key="P_t4")
+    Vnv = st.number_input("Unesite brzinu pomeraja navrtke Vₙᵥ (mm/s):", value=30.0, format="%.8g", key="Vnv_t4")
+    st.info("Vrednost se unosi u mm/s ali se pretvara u m/s radi proračuna (deli se sa 1000). Ovu konverziju jedinica potrebno je naznačiti i na papiru.")
+
+    st.info("Sledeće vrednosti već postoje na odštampanom papiru za grafički rad. Unesi samo one koje su relevantne za tvoj proračun.")
     Trm = st.number_input("Unesite vrednost Tᵣₘ (Nm):", value=80.0, format="%.8g", key="Trm_t4")
     nem = st.number_input("Unesite vrednost nₑₘ (min⁻¹):", value=1450.0, format="%.8g", key="nem_t4")
     z1 = st.number_input("Unesite vrednost z₁ = z₃:", value=19, format="%.8g", key="z1_t4")
@@ -526,6 +530,7 @@ def tacka4():
     z5 = st.number_input("Unesite vrednost z₅:", value=38, format="%.8g", key="z5_t4")
     z6 = st.number_input("Unesite vrednost z₆:", value=20, format="%.8g", key="z6_t4")
     z7 = st.number_input("Unesite vrednost z₇:", value=39, format="%.8g", key="z7_t4")
+    st.info("η_z predstavlja stepen iskorišćenja zupčastog para (efikasnost zupčanika), vrednost je obično između 0.97 i 0.99")
     eta_z = st.number_input("Unesite vrednost η_z:", value=0.99, format="%.8g", key="eta_z_t4")
 
     # Odabir kaišnog para
