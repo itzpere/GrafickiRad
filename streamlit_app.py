@@ -651,8 +651,8 @@ def tacka5():
     st.info("Parametri n_em i P_em iz tačke 4 se prepisuju kao n_k1 i P_k1 u ovoj tački. To treba napomenuti na papiru.")
     
     # Zajednički parametri
-    P_k1 = st.number_input("Unesite snagu P_k1 (= P_em iz tačke 4) (kW):", value=4.0, format="%.8g", key="P_k1_t5")
-    n_k1 = st.number_input("Unesite broj obrtaja n_k1 (= n_em iz tačke 4) (min⁻¹):", value=1450.0, format="%.8g", key="n_k1_t5")
+    P_k1 = st.number_input("Unesite snagu {P_k1} (= {P_em} iz tačke 4) (kW):", value=4.0, format="%.8g", key="P_k1_t5")
+    n_k1 = st.number_input("Unesite broj obrtaja {n_k1} (= {n_em} iz tačke 4) (min⁻¹):", value=1450.0, format="%.8g", key="n_k1_t5")
     
     if kais_type == "Trapezni kaiševi":
         st.subheader("Nije uradjeno")
@@ -661,12 +661,12 @@ def tacka5():
         st.subheader("5.1. Proračun kaišnog prenosnika")
         
         # CA - faktor radnih uslova
-        st.info("Iz tabele 4.2 (str. 133) očitava se C_A – faktor radnih uslova (vrednosti u zagradi uz pomoc uslova rada koji su dati na odstampanom papiru.")
-        CA = st.number_input("Unesite faktor radnih uslova C_A:", value=1.4, format="%.8g", key="CA_t5")
+        st.info("Iz tabele 4.2 (str. 133) očitava se {C_A} – faktor radnih uslova (vrednosti u zagradi uz pomoc uslova rada koji su dati na odstampanom papiru.")
+        CA = st.number_input("Unesite faktor radnih uslova {C_A}:", value=1.4, format="%.8g", key="CA_t5")
         
         # Izračunavanje CA*P_k1
         CA_P = CA * P_k1
-        st.write("**Izračunavanje C_A × P_k1:**")
+        st.write("**Izračunavanje {C_A} × P_k1:**")
         st.latex(f'''C_A \\times P_{{k1}} = {CA:.8g} \\times {P_k1:.8g} = {CA_P:.8g} \\text{{ kW}}''')
         
         # Izbor oznake zupčastog kaiša
